@@ -1,0 +1,90 @@
+.box {
+    padding: 10px;
+    border:1px solid black;
+}
+
+    .box h2 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+
+.bottom-buffer-line {
+    border-top:1px solid #CCC; 
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.bottom-border-line {
+    border-bottom:1px solid #eee; 
+    padding-bottom: 5px;
+}
+
+.top-border-line {
+    border-top:1px solid #eee; 
+    padding-top: 10px;
+}
+
+.bottom-buffer-line-dash {
+    border-top:1px dashed #CCC; 
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.bottom-buffer-large {
+    padding-bottom: 15px;
+}
+
+.top-buffer-large {
+    padding-top: 15px;
+}
+
+.top-buffer {
+    padding-top: 5px;
+}
+
+#ui-datepicker-div {
+    z-index: 10 !important;
+}
+
+.no-border {
+    border: 0px !important;
+}
+
+.navbar {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+    padding: 0px !important;
+    margin-bottom: 20px;
+    border-radius: 0px !important;
+}
+
+.navbar-inverse {
+     background-color: #f5f5f5 !important;
+     border:0px !important;
+}
+
+.navbar-top {
+    margin-bottom: 20px;
+}
+
+.lane {
+    height: 5px;
+    border: 1px solid black;
+    margin-bottom: 2px;
+    background-color: green;
+}
+
+.booked {
+    background-color: #eee;
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-width : 320px) 
+and (max-width : 480px) {
+    .fc-button-month, .select-pool, .more-info, .hide-mobile {
+        display: none;
+    }
+}
