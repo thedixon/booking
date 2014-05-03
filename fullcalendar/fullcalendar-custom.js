@@ -488,12 +488,16 @@ sbs.fullCalendarCustom.prototype.setupEvents = function () {
     });
 
     $('#tabs a').click(function (e) {
-        changeDisplayType($(this).data("displaytype"));
-
         e.preventDefault();
 
         $(this).tab('show');
     });
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        changeDisplayType($(this).data("displaytype"));
+
+        History.pushState({ state: $(this).data("state") }, $(this).data("title"), "?action=" + $(this).data("displaytype"));
+    })
 
     $('.btn').button();
 }
@@ -589,10 +593,26 @@ $(function () {
         calendar.fullCalendar('next');
     });
 
+    
+
+    if (querystring("action") == "") {
+        History.pushState({ state: 0 }, "Events", "?action=events");
+    }
+
+    History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+        var State = History.getState(); // Note: We are using History.getState() instead of event.state
+
+        if (State.data.state == 3) {
+            globalVM.basket.showPayment(false);
+        } else if (State.data.state == 5) {
+            globalVM.basket.showPayment(true);
+        }
+
+        $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+    });
+
     // First load only
     if (globalVM.venueId() > 0) {
-        $('#tabs li:eq(1) a').tab('show');
-
-        changeDisplayType("activities");
+        History.pushState({ state: 1 }, "Activities", "?action=activities");
     }
 });

@@ -8,8 +8,11 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         total: ko.observable(0),
         timerOnHold: false,
         continuedToBasket: false,
+        agreedToTerms: ko.observable(false),
         timerValue: ko.observable(),
-        showTimer: ko.observable(false)
+        showTimer: ko.observable(false),
+        showPayment: ko.observable(false),
+        notAgreedToTerms: ko.observable(false)
     }
 
     self.basket.extendTime = function () {
@@ -22,6 +25,8 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.navigateTo = function () {
+        self.basket.notAgreedToTerms(false);
+
         self.basket.timerOnHold = false;
         self.basket.continuedToBasket = true;
 
@@ -81,4 +86,66 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
             self.basket.continuedToBasket = false;
         }
     }
+
+    self.basket.confirm = function () {
+        if (self.basket.agreedToTerms()) {
+            History.pushState({ state: 5 }, "Payment", "?action=payment");
+
+            self.basket.showPayment(true);
+
+            self.basket.notAgreedToTerms(false);
+        } else {
+            self.basket.notAgreedToTerms(true);
+        }
+    }
+
+    self.basket.cancel = function () {
+        History.pushState({ state: 4 }, "Basket", "?action=basket");
+
+        self.basket.notAgreedToTerms(false);
+    }
+
+    self.basket.payment = {
+        cardName: {
+            value: ko.observable(''),
+            showError: ko.observable(false)
+        },
+        cardNumber: {
+            value: ko.observable(''),
+            showError: ko.observable(false)
+        },
+        ccv: {
+            value: ko.observable(''),
+            showError: ko.observable(false)
+        },
+        cancel: function () {
+            History.pushState({ state: 3 }, "Basket", "?action=basket");
+        },
+        doPayment: function () {
+            if (self.basket.payment.cardName.value() == "") {
+                self.basket.payment.cardName.showError(true);
+            }
+
+            if (self.basket.payment.cardNumber.value() == "") {
+                self.basket.payment.cardNumber.showError(true);
+            }
+
+           
+            if (self.basket.payment.ccv.value() == "") {
+                self.basket.payment.ccv.showError(true);
+            }
+        }
+    }
+
+    self.basket.payment.cardName.value.subscribe(function (val) {
+        self.basket.payment.cardName.showError(val != "");
+    });
+
+    self.basket.payment.cardNumber.value.subscribe(function (val) {
+        self.basket.payment.cardNumber.showError(val != "");
+    });
+
+    self.basket.payment.ccv.value.subscribe(function (val) {
+        self.basket.payment.ccv.showError(val != "");
+    });
 }

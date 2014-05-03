@@ -10,6 +10,8 @@
     <script src='./fullcalendar/jquery-1.10.2.js'></script>
     <script src='./fullcalendar/jquery-ui-1.10.4.custom.min.js'></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src='./lib/history.js'></script>
+    <script src='./lib/history.adapter.js'></script>
     <script src='./lib/knockout-3.1.0.js'></script>
     <script src='./lib/knockout.punches.js'></script>
     <script src='./lib/underscore.js'></script>
@@ -47,13 +49,13 @@
     <div class="container">
         <div id="tabs">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#events" data-toggle="tab" data-displaytype="events">Events</a></li>
-                <li><a href="#activities" data-toggle="tab" data-displaytype="activities">Activities</a></li>
-                <li><a href="#swimmingPool" data-toggle="tab" data-displaytype="swimmingPool">Swimming Pool</a></li>
-                <li class="pull-right"><a href="#basket" data-toggle="tab" data-displaytype="basket">
+                <li class="active"><a href="#events" data-toggle="tab" data-displaytype="events" data-state="0" data-title="Events">Events</a></li>
+                <li><a href="#activities" data-toggle="tab" data-displaytype="activities" data-state="1" data-title="Activities">Activities</a></li>
+                <li><a href="#swimmingPool" data-toggle="tab" data-displaytype="swimmingPool" data-state="2" data-title="Swimming Pool">Swimming Pool</a></li>
+                <li class="pull-right"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
                     <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
                 </li>
-                <li style="display: none"><a href="#signIn">Sign In</a></li>
+                <li style="display: none"><a href="#signIn" data-displaytype="signIn" data-state="4" data-title="Sign In">Sign In</a></li>
             </ul>
             <div class="tab-content top-buffer-large">
                 <div class="tab-pane active" id="events">
@@ -121,9 +123,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="basket">
+                <div class="tab-pane" id="basket" data-bind="with: basket">
                     <div class="container bottom-buffer-large">
-                        <!-- ko if: basket.items().length == 0 -->
+                        <!-- ko if: items().length == 0 -->
                             <div class="panel panel-default">
                                 <div class="panel-body text-center">
                                     <h4>Sorry!</h4>
@@ -132,12 +134,13 @@
                             </div>
                         <!-- /ko -->
 
-                        <!-- ko if: basket.items().length > 0 -->
+                        <!-- ko if: items().length > 0 -->
+                            <!-- ko if: !showPayment() -->
                             <div class="col-md-5">
                                 <div class="page-header">
                                     <h3>Booking Detail</h3>
                                 </div>
-                                <div data-bind="foreach: basket.items">
+                                <div data-bind="foreach: items">
                                     <div class="bottom-border-line">
                                         <div class="row">
                                             <div class="col-md-9">
@@ -168,7 +171,7 @@
 
                                 <div class="row bottom-border-line">
                                     <div class="col-md-3"><h3>Charge</h3></div>
-                                    <div class="col-md-9 text-right"><h3>{{ formatToPrice(basket.total()) }} SGD</h3></div>
+                                    <div class="col-md-9 text-right"><h3>{{ $root.formatToPrice(total()) }} SGD</h3></div>
                                 </div>
 
                                 <div class="top-buffer-large">
@@ -177,16 +180,22 @@
 
                                 <div class="row top-buffer-large">
                                     <div class="col-md-12">
-                                        <input type="checkbox" /> Agree to the <a href="#">terms and conditions</a>
+                                        <input type="checkbox" data-bind="checked: agreedToTerms" /> Agree to the <a href="#">terms and conditions</a>
                                     </div>
+                                </div>
+
+                                <div class="top-buffer-large" data-bind="if: notAgreedToTerms">
+                                    <p class="bg-danger">
+                                        <i class="glyphicon glyphicon-exclamation-sign"></i> You must agree to the terms and conditions before continuing.
+                                    </p>
                                 </div>
 
                                 <div class="row top-buffer-large">
                                     <div class="col-md-4">
-                                        <button class="btn btn-success">Confirm Booking</button>
+                                        <button class="btn btn-success" data-bind="click: confirm">Confirm Booking</button>
                                     </div>
                                     <div class="col-md-4">
-                                        <button class="btn btn-info">Cancel</button>
+                                        <button class="btn btn-info" data-bind="click: cancel">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -217,6 +226,61 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- /ko -->
+
+                            <!-- ko if: showPayment -->
+                                <div class="page-header">
+                                    <h3>Payment Information</h3>
+                                </div>
+                                
+                                <div class="col-md-5" data-bind="with: payment">
+                                <form role="form">
+                                      <div class="form-group">
+                                         <label for="paymentCardType">Select credit card type</label>
+                                         <select id="paymentCardType" class="form-control">
+                                             <option>Credit card type</option>
+                                             <option>VISA Debit</option>
+                                         </select>
+                                      </div>
+                                      <div class="form-group" data-bind="css: { 'has-error': cardName.showError }">
+                                         <label for="paymentCardName">Name on the card</label>
+                                         <input id="paymentCardName" type="text" class="form-control" data-bind="value: cardName.value, valueUpdate: 'afterkeypress'" />
+                                      </div>
+                                      <div class="form-group" data-bind="css: { 'has-error': cardNumber.showError }">
+                                         <label for="paymentCardNumber">Credit card number</label>
+                                         <input id="paymentCardNumber" type="text" class="form-control" data-bind="value: cardNumber.value, valueUpdate: 'afterkeypress'" />
+                                      </div>
+                                      <div class="form-group">
+                                         <label for="paymentExpirationDateMonth">Expiration date</label>
+                                         <div class="row">
+                                             <div class="col-md-5">
+                                                  <select id="paymentExpirationDateMonth" class="form-control">
+                                                      <option>01</option>
+                                                  </select>
+                                              </div>
+                                              <div class="col-md-5 col-md-offset-2">
+                                                  <select id="paymentExpirationDateYear" class="form-control">
+                                                      <option>2014</option>
+                                                  </select>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="form-group" data-bind="css: { 'has-error': ccv.showError }">
+                                         <label for="paymentCCV">CCV</label>
+                                         <input id="paymentCCV" type="text" class="form-control" data-bind="value: ccv.value, valueUpdate: 'afterkeypress'" />
+                                      </div>
+                                      <div class="row">
+                                         <div class="col-md-6">
+                                            <button type="submit" class="btn btn-default"  data-bind="click: doPayment">Submit Payment</button>
+                                         </div>
+
+                                          <div class="col-md-6 text-right">
+                                            <button type="submit" class="btn btn-default" data-bind="click: $parent.cancel">Cancel</button>
+                                         </div>
+                                       </div>
+                                    </form>
+                                </div>
+                            <!-- /ko -->
                         <!-- /ko -->
                     </div>
                 </div>
