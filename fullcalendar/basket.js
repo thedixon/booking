@@ -106,6 +106,8 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.payment = {
+        showThankYou: ko.observable(false),
+        showFailure: ko.observable(false),
         cardName: {
             value: ko.observable(''),
             showError: ko.observable(false)
@@ -121,6 +123,19 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         cancel: function () {
             History.pushState({ state: 3 }, "Basket", "?action=basket");
         },
+        showFailureOrThankYou: function (reason) {
+            self.basket.showPayment(false);
+
+            if (reason == "success") {
+                self.basket.payment.showThankYou(true);
+            } else if (reason == "failure") {
+                self.basket.payment.showFailure(true);
+            }
+        },
+        clearScreens: function () {
+            self.basket.payment.showThankYou(false);
+            self.basket.payment.showFailure(false);
+        },
         doPayment: function () {
             if (self.basket.payment.cardName.value() == "") {
                 self.basket.payment.cardName.showError(true);
@@ -129,7 +144,6 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
             if (self.basket.payment.cardNumber.value() == "") {
                 self.basket.payment.cardNumber.showError(true);
             }
-
            
             if (self.basket.payment.ccv.value() == "") {
                 self.basket.payment.ccv.showError(true);

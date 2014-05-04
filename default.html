@@ -20,6 +20,8 @@
     <script src='./fullcalendar/fullcalendar-custom.js'></script>
     <script src='./fullcalendar/basket.js'></script>
     <script src='./fullcalendar/loaddata.js'></script>
+
+    <title></title>
 </head>
 
 <body>
@@ -49,13 +51,24 @@
     <div class="container">
         <div id="tabs">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#events" data-toggle="tab" data-displaytype="events" data-state="0" data-title="Events">Events</a></li>
-                <li><a href="#activities" data-toggle="tab" data-displaytype="activities" data-state="1" data-title="Activities">Activities</a></li>
-                <li><a href="#swimmingPool" data-toggle="tab" data-displaytype="swimmingPool" data-state="2" data-title="Swimming Pool">Swimming Pool</a></li>
-                <li class="pull-right"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
+                <li class="active" data-displaytype="events">
+                    <a href="#events" data-toggle="tab" data-displaytype="events" data-state="0" data-title="Events">Events</a>
+                </li>
+                <li data-displaytype="activities">
+                    <a href="#activities" data-toggle="tab" data-displaytype="activities" data-state="1" data-title="Activities">Activities</a>
+                </li>
+                <li data-displaytype="swimmingPool">
+                    <a href="#swimmingPool" data-toggle="tab" data-displaytype="swimmingPool" data-state="2" data-title="Swimming Pool">Swimming Pool</a>
+                </li>
+                <li class="pull-right" data-displaytype="basket"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
                     <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
                 </li>
-                <li style="display: none"><a href="#signIn" data-displaytype="signIn" data-state="4" data-title="Sign In">Sign In</a></li>
+                <li style="display: none" data-displaytype="signIn">
+                    <a href="#signIn" data-displaytype="signIn" data-state="4" data-title="Sign In">Sign In</a>
+                </li>
+                <li style="display: none" data-displaytype="myBookings">
+                    <a href="#myBookings" data-displaytype="myBookings" data-state="6" data-title="My Bookings">My Bookings</a>
+                </li>
             </ul>
             <div class="tab-content top-buffer-large">
                 <div class="tab-pane active" id="events">
@@ -109,11 +122,7 @@
                         <div class="row">
                             <div class="col-md-3 text-left">
                                 <strong class="select-pool">Select Pool</strong>
-                                <div class="btn-group" data-toggle="buttons" data-bind="foreach: poolTypes">
-                                    <label class="btn btn-primary" data-bind="css: { active: $index() == 0 }">
-                                        <input type="radio" name="options" id="option1" value="{{ id }}" data-bind="click: $root.changePoolType"> {{ name }}
-                                    </label>
-                                </div>
+                                <select data-bind="options: poolTypes, optionsText: 'name', optionsValue: 'id', value: swimmingPoolSelected" class="form-control"></select>
                             </div>
 
                             <div class="col-md-2 text-left">
@@ -125,7 +134,7 @@
                 </div>
                 <div class="tab-pane" id="basket" data-bind="with: basket">
                     <div class="container bottom-buffer-large">
-                        <!-- ko if: items().length == 0 -->
+                        <!-- ko if: items().length == 0 && !payment.showThankYou() && !payment.showFailure() -->
                             <div class="panel panel-default">
                                 <div class="panel-body text-center">
                                     <h4>Sorry!</h4>
@@ -135,7 +144,7 @@
                         <!-- /ko -->
 
                         <!-- ko if: items().length > 0 -->
-                            <!-- ko if: !showPayment() -->
+                            <!-- ko if: !showPayment() && !payment.showThankYou() && !payment.showFailure() -->
                             <div class="col-md-5">
                                 <div class="page-header">
                                     <h3>Booking Detail</h3>
@@ -282,6 +291,98 @@
                                 </div>
                             <!-- /ko -->
                         <!-- /ko -->
+
+                        <!-- ko if: payment.showThankYou -->
+                            <div class="page-header">
+                                <h3>Payment was successful!</h3>
+                            </div>
+                                
+                            <div class="col-md-5">
+                                We have confirmed the following bookings in our system:
+
+                                <div class="top-buffer-large">
+                                    <div class="panel panel-default grey-bg">
+                                      <div class="panel-body">
+                                          <div class="bottom-border-line-grey">
+                                              <h4>Basketball facility booking</h4>
+                                              Sports hall 3
+                                              <div class="row">
+                                                  <div class="col-md-7">
+                                                      17 April 2014 5 pm - 6 pm
+                                                  </div>
+                                                  <div class="col-md-5 text-right">
+                                                      Charge: <strong>X SGD</strong>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="bottom-border-line-grey">
+                                              <h4>Basketball facility booking</h4>
+                                              Sports hall 3
+                                              <div class="row">
+                                                  <div class="col-md-7">
+                                                      17 April 2014 5 pm - 6 pm
+                                                  </div>
+                                                  <div class="col-md-5 text-right">
+                                                      Charge: <strong>X SGD</strong>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div>
+                                              <h4>Basketball facility booking</h4>
+                                              Sports hall 3
+                                              <div class="row">
+                                                  <div class="col-md-7">
+                                                      17 April 2014 5 pm - 6 pm
+                                                  </div>
+                                                  <div class="col-md-5 text-right">
+                                                      Charge: <strong>X SGD</strong>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                    </div>
+                                </div>
+
+                                <div class="page-header no-border">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h3>Total charge: </h3> 
+                                        </div>
+
+                                        <div class="col-md-6 text-right">
+                                            <h3 class="">X SGD</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5 col-md-offset-2">
+                                <h4>Tickets</h4>
+                                Tickets will be sent to your registerd email. You can also view your booking and print out tickets under the my bookings sections.
+
+                                <div class="top-buffer-large">
+                                    <button class="btn btn-info">View my bookings</button>
+                                </div>
+                            </div>
+                        <!-- /ko -->
+
+                        <!-- ko if: payment.showFailure -->
+                            <div class="page-header">
+                                <h3>Payment failed</h3>
+                            </div>
+
+                            We were unable to process the payment with the credit card you provided.
+                               
+                            <div class="top-buffer-large">
+                                <h4>The following error occured:</h4>
+                                Aenean lacinia bibendum nulla sed consectetur. Maecenas sed diam eget risus varius blandit sit amet non magna.
+                            </div>
+                                
+                            <div class="top-buffer-large">
+                                <button class="btn btn-info">Try again</button>
+                            </div>
+                        <!-- /ko -->
+                        
                     </div>
                 </div>
                 <div class="tab-pane" id="signIn" data-bind="with: signIn">
@@ -329,6 +430,124 @@
                     <div class="container" data-bind="if: wrongDetails">
                         <div class="bg-danger">
                             <i class="glyphicon glyphicon-exclamation-sign"></i> <h4>Wrong username or password.</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="myBookings">
+                    <div class="container">
+                        <div class="page-header">
+                            <h3>My Bookings</h3>
+                        </div>
+
+                        Cras justo odio, dapibus ac facilisis in, egestas eget quam. Maecenas faucibus mollis interdum. Aenean lacinia bibendum nulla sed consectetur.
+
+                         <div class="page-header">
+                            <h3>Classes and Facility bookings</h3>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <img src="images/basketball.jpg" class="img-responsive img-rounded" />
+                                </div>
+
+                                <div class="col-md-7">
+                                    <h4>Basketball - Facility booking</h4>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            Sports Hall - Hall 3
+                                        </div>
+
+                                        <div class="col-md-4 col-md-offset-1">
+                                            1 hour
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            17 April 2014 at 5 pm
+                                        </div>
+
+                                        <div class="col-md-4 col-md-offset-1">
+                                            Max 10 attendees
+                                        </div>
+                                    </div>
+
+                                    <p class="top-buffer-large">
+                                        <button class="btn btn-info">Download ticket</button> 
+                                        <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
+                                    </p>
+                                </div>
+                            </div>
+
+                             <div class="row top-buffer-large">
+                                 <div class="col-md-2">
+                                     <img src="images/wateryoga.jpg" class="img-responsive img-rounded" />
+                                 </div>
+
+                                 <div class="col-md-7">
+                                     <h4>Water yoga</h4>
+                                     <div class="row">
+                                        <div class="col-md-4">
+                                            Aquatics center - Main pool
+                                        </div>
+
+                                        <div class="col-md-4 col-md-offset-1">
+                                            1 hour
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            17 April 2014 at 5 pm
+                                        </div>
+
+                                        <div class="col-md-4 col-md-offset-1">
+                                            2 spots
+                                        </div>
+                                    </div>
+
+                                    <p class="top-buffer-large">
+                                        <button class="btn btn-info">Download ticket</button> 
+                                        <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="page-header">
+                            <h3>Valid entry tickets</h3>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img src="images/pool1.jpg" class="img-responsive img-rounded" />
+                            </div>
+
+                            <div class="col-md-7">
+                                <h4>Aquatic Centre Entry Ticket</h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Aquatic Centre
+                                    </div>
+
+                                    <div class="col-md-4 col-md-offset-1">
+                                       Valid to 30 September 2013
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Single entry for 2 persons
+                                    </div>
+
+                                    <div class="col-md-4 col-md-offset-1">
+                                        
+                                    </div>
+                                </div>
+
+                                <p class="top-buffer-large">
+                                    <button class="btn btn-info">Download ticket</button> 
+                                    <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -390,7 +609,7 @@
                                 <div class="row" data-bind="css: { 'bottom-buffer-line': $index() % 2 == 1 }">
                                     <div class="col-md-9">
                                         <div class="pull-left col-md-2" data-bind="if: $root.displayType() == 'events'">
-                                            <img data-bind="attr: { src: imageLocation }" style="width: 100%" alt="" />
+                                            <img data-bind="attr: { src: imageLocation }" class="img-responsive img-rounded" alt="" />
                                         </div>
 
                                         <h4>{{ displayTitle }}</h4>

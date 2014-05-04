@@ -131,21 +131,25 @@
             start: new Date(y, m, d, 9),
             lanesTaken: 4,
             //laneNumbersTaken: [1,3,5,6]
+            poolId: 1
         },
         {
             start: new Date(y, m, d, 11),
             lanesTaken: 2,
             //laneNumbersTaken: [1, 3, 5, 6]
+            poolId: 1
         },
         {
             start: new Date(y, m, d, 13),
             lanesTaken: 1,
             //laneNumbersTaken: [1],
-            bookingNotAllowed: true
+            bookingNotAllowed: true,
+            poolId: 2
         },
         {
             start: new Date(y, m, d, 14),
-            lanesTaken: 12
+            lanesTaken: 12,
+            poolId: 3
         }
     ]
 }

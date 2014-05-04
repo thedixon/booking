@@ -112,7 +112,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         
         // Simply pointers to the the top-level arrays.
         var sportsEvents = customCalendar.getEvents('sports');
-        var swimmingBookings = customCalendar.getEvents('swimmingBookings');
+        
 
         var sportsDate = new Date();
         
@@ -128,7 +128,9 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             return laneArray;
         }
 
-        this.sportEventName.subscribe(function (val) {
+        function showPools(val) {
+            var swimmingBookings = customCalendar.getEvents('swimmingBookings', self.swimmingPoolSelected());
+
             self.timeTemplate.fullDisplay.removeAll();
 
             for (var i = 0; i < sportsEvents.length; i++) {
@@ -170,7 +172,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
                 var divideAmount = (self.currentSport.laneAmount / 2);
                 for (var o = 0; o < 2; o++) {
-                    
+
                     laneColumns.push({
                         lanes: makeLanes(divideAmount * o, divideAmount, currentLanesTaken)
                     });
@@ -181,7 +183,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
                 var startTime = self.getHourByDate(new Date().setHours(i));
 
                 self.timeTemplate.fullDisplay.push({
-                    startHour: startTime, 
+                    startHour: startTime,
                     fullTime: startTime + " - " + self.getHourByDate(endDate),
                     increment: self.currentSport.increment,
                     description: description,
@@ -191,7 +193,15 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
                     eventType: "swimming"
                 })
             }
-    
+        }
+
+        this.swimmingPoolSelected = ko.observable(1);
+        this.swimmingPoolSelected.subscribe(function () {
+            showPools(self.sportEventName());
+        });
+
+        this.sportEventName.subscribe(function (val) {
+            showPools(val);
         });
 
         this.showSwimmingDetails = function (event, override) {
@@ -377,8 +387,16 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             return makeArray;
         }, this);
 
-        this.changePoolType = function () {
+        this.changePoolType = function (val) {
+            var bookings = customCalendar.getEvents("swimmingBookings");
 
+            var filteredBookings = _.filter(bookings, function (booking) {
+                return booking.poolId == val;
+            });
+
+            console.log(filteredBookings);
+
+            self.timeTemplate(filteredBookings);
         };
 
         this.isMonthView = ko.computed(function () {
@@ -424,6 +442,22 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         this.signIn.password.value.subscribe(function (val) {
             self.signIn.password.showError(val != "");
         });
+
+        this.myBookings = {
+            sendToEmail: function (a,b) {
+                var btn = $(b.currentTarget);
+
+                btn.button('loading');
+
+                setTimeout(function() {
+                    btn.button('complete');
+
+                    setTimeout(function () {
+                        btn.addClass("disabled");
+                    }, 10)
+                }, 5000);
+            }
+        }
 
         customCalendar.setupBasketVM(this);
     };
@@ -494,9 +528,26 @@ sbs.fullCalendarCustom.prototype.setupEvents = function () {
     });
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        globalVM.basket.payment.clearScreens();
+
         changeDisplayType($(this).data("displaytype"));
 
-        History.pushState({ state: $(this).data("state") }, $(this).data("title"), "?action=" + $(this).data("displaytype"));
+        var reason = querystring("reason");
+        var showReason = reason != "" && $(this).data("displaytype") == "basket";
+
+        if (showReason) {
+            // For payment success/failure
+            globalVM.basket.payment.showFailureOrThankYou(reason);
+        }
+
+        if ($(this).data("state") == 6) {
+            globalVM.showDayView(false);
+        }
+
+        History.pushState({ state: $(this).data("state") }, $(this).data("title"), "?action=" + $(this).data("displaytype")
+                          + (showReason ? "&reason=" + reason : ""));
+
+       
     })
 
     $('.btn').button();
@@ -528,7 +579,7 @@ sbs.fullCalendarCustom.prototype.groupType = function (eventSources, type) {
     return newSource;
 }
 
-sbs.fullCalendarCustom.prototype.getEvents = function (displayType) {
+sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
     switch (displayType) {
         case "events":
             return this.calendarEvents;
@@ -540,7 +591,12 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType) {
             return this.sportsEvents;
             break;
         case "swimmingBookings":
-            return this.swimmingBookings;
+            var bookings = this.swimmingBookings;
+
+            return _.filter(bookings, function (booking) {
+                return booking.poolId == filter;
+            });
+
             break;
     }
 }
@@ -593,10 +649,14 @@ $(function () {
         calendar.fullCalendar('next');
     });
 
-    
-
     if (querystring("action") == "") {
         History.pushState({ state: 0 }, "Events", "?action=events");
+    } else {
+        if (querystring("action") == "myBookings") {
+            globalVM.showDayView(false);
+        }
+
+        $('#tabs li[data-displaytype=' + querystring("action") + '] a').tab('show');
     }
 
     History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
@@ -610,6 +670,7 @@ $(function () {
 
         $('#tabs li:eq(' + State.data.state + ') a').tab('show');
     });
+
 
     // First load only
     if (globalVM.venueId() > 0) {

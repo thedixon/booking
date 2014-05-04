@@ -20,6 +20,12 @@
     padding-bottom: 5px;
 }
 
+.bottom-border-line-grey {
+    border-bottom:1px solid #CCC; 
+    padding-bottom: 5px;
+}
+
+
 .top-border-line {
     border-top:1px solid #eee; 
     padding-top: 10px;
@@ -33,6 +39,10 @@
 
 .bottom-buffer-large {
     padding-bottom: 15px;
+}
+
+.grey-bg {
+    background-color: #EEE !important;
 }
 
 .top-buffer-large {
