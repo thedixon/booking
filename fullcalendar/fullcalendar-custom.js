@@ -14,6 +14,7 @@ var m = currentDate.getMonth();
 var y = currentDate.getFullYear();
 var cachedEvents = [];
 var cachedActivities = [];
+var oneDay = 24 * 60 * 60 * 1000;
 
 // Calendar options
 var calendarSmallDateFormat = true;
@@ -25,6 +26,11 @@ var timeFilterLimit = 6;
 // Timer
 var timerMinutes = 2;
 var secondsUntilBasketWarning = 30;
+
+// Further options
+var swimmingDaysShown = 7;
+var eventsNotAllowedToBookFor = 2;
+var swimmingNotAllowedToBookFor = 2;
 
 window.sbs = window.sbs || {};
 
@@ -271,6 +277,16 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             var newDate = new Date(theDate.getFullYear(), theDate.getMonth(), theDate.getDate());
 
             newDate.setDate(theDate.getDate() + 1);
+            
+            if (this.displayType() == "swimmingPool") {
+                var futureDate = new Date();
+                futureDate.setDate(futureDate.getDate() + swimmingDaysShown);
+
+                var diffDays = Math.round(Math.abs((theDate.getTime() - futureDate.getTime()) / (oneDay)));
+                if (diffDays == 0) {
+                    return "";
+                }
+            }
 
             return newDate.getDate() + " " + shortMonthNames[newDate.getMonth()];
         }, this);
@@ -317,6 +333,18 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
 
             this.viewType(viewType);
+        }
+
+        this.eventsCanBook = function () {
+            var futureDate = new Date(currentDate.getYear(), currentDate.getMonth(), currentDate.getDate() + eventsNotAllowedToBookFor, 0, 0, 0);
+            var diffDays = Math.round(Math.abs((futureDate.getTime() - self.date().getTime()) / (oneDay)));
+            
+            //console.log(diffDays);
+            return false;
+        };
+
+        this.swimmingCanBook = function () {
+
         }
 
         this.activitiesInDay = ko.computed(function () {
@@ -393,8 +421,6 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             var filteredBookings = _.filter(bookings, function (booking) {
                 return booking.poolId == val;
             });
-
-            console.log(filteredBookings);
 
             self.timeTemplate(filteredBookings);
         };
@@ -499,6 +525,8 @@ function changeDisplayType(displayType) {
                 globalVM.sportEventName('Swimming');
             }
 
+            globalVM.date(new Date());
+
             break;
         case "basket":
             globalVM.showPoolView(false);
@@ -520,6 +548,8 @@ sbs.fullCalendarCustom.prototype.setupEvents = function () {
             }
         }
     });
+
+    $('.poolDatePicker').datepicker( "option", "maxDate", "+" + swimmingDaysShown + "d")
 
     $('#tabs a').click(function (e) {
         e.preventDefault();
@@ -591,9 +621,7 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
             return this.sportsEvents;
             break;
         case "swimmingBookings":
-            var bookings = this.swimmingBookings;
-
-            return _.filter(bookings, function (booking) {
+            return _.filter(this.swimmingBookings, function (booking) {
                 return booking.poolId == filter;
             });
 

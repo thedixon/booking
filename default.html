@@ -127,7 +127,7 @@
 
                             <div class="col-md-2 text-left">
                                 <strong>Date</strong>
-                                <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
+                                <input type="text" class="form-control datepicker poolDatePicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
                             </div>
                         </div>
                     </div>
@@ -581,7 +581,7 @@
                         <h3>
                             <a href="#" data-bind="click: goToPreviousDay"><i class="glyphicon glyphicon-chevron-left"></i>  {{ previousDay }}</a> 
                             &#160 &#160 &#160 &#160  
-                            <a href="#" data-bind="click: goToNextDay">{{ nextDay }} <i class="glyphicon glyphicon-chevron-right"></i></a>
+                            <a href="#" data-bind="click: goToNextDay, visible: nextDay().length > 0">{{ nextDay }} <i class="glyphicon glyphicon-chevron-right"></i></a>
                         </h3>
                     </div>
                 </div>
@@ -639,7 +639,7 @@
                                         <button class="btn btn-info more-info">More Info</button>
                                         <button class="btn btn-info" 
                                             data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
-                                                       click: $root.basket.add">Book</button>
+                                                       click: $root.basket.add, enable: $root.eventsCanBook">Book</button>
                                     </div>
                                 </div>
                             </div>
@@ -679,7 +679,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <button class="btn btn-info" 
-                                            data-bind="click: $root.basket.add">Book Lane</button>
+                                            data-bind="click: $root.basket.add, enable: $root.swimmingCanBook">Book Lane</button>
                                 </div>
                             </div>
                         </div>
