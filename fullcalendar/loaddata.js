@@ -1,15 +1,57 @@
 ﻿sbs.fullCalendarCustom.prototype.loadData = function () {
     // Ultimately this will all be called in through AJAX.
-
     this.sportsEvents = [
         {
+            id: 1,
             name: "Swimming",
             startTime: 9,
             endTime: 20,
             template: "swimming",
             increment: 1,
             laneAmount: 20,
-            price: 5.50
+            price: 5.50,
+            prefix: "Lane"
+        },
+        {
+            id: 2,
+            name: "Basketball",
+            startTime: 9,
+            endTime: 20,
+            template: "default",
+            increment: 1,
+            price: 5.50,
+            prefix: "Court",
+            courts: 5
+        },
+        {
+            id: 3,
+            name: "Football",
+            startTime: 9,
+            endTime: 20,
+            template: "default",
+            increment: 1,
+            price: 7,
+            courts: 5
+        },
+        {
+            id: 4,
+            name: "Tennis",
+            startTime: 9,
+            endTime: 20,
+            template: "default",
+            increment: 1,
+            price: 8,
+            courts: 5
+        },
+        {
+            id: 5,
+            name: "Hockey",
+            startTime: 9,
+            endTime: 20,
+            template: "default",
+            increment: 1,
+            price: 5.50,
+            courts: 5
         }
     ]
 
@@ -126,6 +168,55 @@
         }
     ]
 
+    this.sportsActivities = [
+        {
+            title: "Short Activity 1",
+            displayTitle: "Short Activity 1",
+            start: new Date(y, m, d, 8, 30),
+            end: new Date(y, m, d, 9, 30),
+            allDay: false,
+            placesLeft: 10,
+            imageLocation: '',
+            description: '',
+            price: 10
+        },
+        {
+            title: "Short Activity 2",
+            displayTitle: "Short Activity 2",
+            start: new Date(y, m, d + 1, 14, 00),
+            end: new Date(y, m, d + 1, 15, 00),
+            allDay: false,
+            sportId: 2,
+            placesLeft: 10,
+            imageLocation: '',
+            description: '',
+            price: 10
+        },
+        {
+            title: "Lunch",
+            displayTitle: "Lunch",
+            start: new Date(y, m, d, 12, 0),
+            end: new Date(y, m, d, 14, 0),
+            allDay: false,
+            placesLeft: 10,
+            imageLocation: '',
+            description: '',
+            price: 10
+        },
+        {
+            title: "Click for Google",
+            displayTitle: "Click for Google",
+            start: new Date(y, m, d, 16, 0),
+            end: new Date(y, m, d, 18, 30),
+            allDay: false,
+            url: "http://google.com/",
+            placesLeft: 10,
+            imageLocation: '',
+            description: '',
+            price: 10
+        }
+    ]
+
     this.swimmingBookings = [
         {
             start: new Date(y, m, d, 9),
@@ -150,6 +241,26 @@
             start: new Date(y, m, d, 14),
             lanesTaken: 12,
             poolId: 3
+        }
+    ]
+
+    this.sportsBookings = [
+        {
+            start: new Date(y, m, d, 9),
+            sportId: 2
+        },
+        {
+            start: new Date(y, m, d, 11),
+            sportId: 2
+        },
+        {
+            start: new Date(y, m, d, 13),
+            bookingNotAllowed: true,
+            sportId: 3 
+        },
+        {
+            start: new Date(y, m, d, 14),
+            sportId: 4
         }
     ]
 }

@@ -17,7 +17,7 @@
     <script src='./lib/underscore.js'></script>
     <script src='./fullcalendar/fullcalendar.js'></script>
     <script src='./fullcalendar/custom-functions.js'></script>
-    <script src='./fullcalendar/fullcalendar-custom.js'></script>
+    <script src='./fullcalendar/venues.js'></script>
     <script src='./fullcalendar/shared.js'></script>
     <script src='./fullcalendar/basket.js'></script>
     <script src='./fullcalendar/loaddata.js'></script>
@@ -26,109 +26,38 @@
 </head>
 
 <body>
-    <div class="modal fade" id="timerModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-            <p>Your time is almost up! Please check out your basket now or extend your time, 
-                otherwise the contents of your basket will be cleared.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: basket.extendTime">Extend Time</button>
-            <button type="button" class="btn btn-primary" data-bind="click: basket.navigateTo">Go to Basket</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="navbar navbar-top bg-warning" role="navigation">
-        <div class="container">
-            <ul class="nav navbar-nav pull-right">
-                <li><a href="#" data-bind="click: signIn.goTo">Sign In</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="container">
+    <div id="venueContainer" class="container">
         <div id="tabs">
             <ul class="nav nav-tabs">
                 <li class="active" data-displaytype="events">
-                    <a href="#events" data-toggle="tab" data-displaytype="events" data-state="0" data-title="Events">Events</a>
-                </li>
-                <li data-displaytype="activities">
-                    <a href="#activities" data-toggle="tab" data-displaytype="activities" data-state="1" data-title="Activities">Activities</a>
-                </li>
-                <li data-displaytype="swimmingPool">
-                    <a href="#swimmingPool" data-toggle="tab" data-displaytype="swimmingPool" data-state="2" data-title="Swimming Pool">Swimming Pool</a>
+                    <a href="#venue" data-toggle="tab" data-displaytype="venue" data-state="0" data-title="venue">Venue</a>
                 </li>
                 <li class="pull-right" data-displaytype="basket"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
                     <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
                 </li>
-                <li style="display: none" data-displaytype="signIn">
-                    <a href="#signIn" data-displaytype="signIn" data-state="4" data-title="Sign In">Sign In</a>
-                </li>
-                <li style="display: none" data-displaytype="myBookings">
-                    <a href="#myBookings" data-displaytype="myBookings" data-state="6" data-title="My Bookings">My Bookings</a>
-                </li>
             </ul>
             <div class="tab-content top-buffer-large">
-                <div class="tab-pane active" id="events">
+                <div class="tab-pane active" id="venue">
                     <div class="alert alert-warning">
                         <div class="row">
                             <div class="col-md-4 text-left">
-                                <strong>Event Type</strong>
-                                <select data-bind="options: eventTypes, optionsText: 'name', optionsValue: 'id', value: eventTypeId" class="form-control"></select>
-                            </div>
-                            <div class="col-md-2 text-left">
-                                <strong>Date</strong>
-                                <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
-                            </div>
-                            <div class="col-md-2 col-md-offset-4 text-left">
-                                <strong>View</strong><br />
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
-                                    <button type="button" class="btn btn-default" data-view="month" data-bind="click: toggleView, css: { 'active': viewType() == 'month' }">Month</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="activities">
-                    <div class="alert alert-warning">
-                        <div class="row">
-                            <div class="col-md-4 text-left">
-                                <strong>Venue</strong>
+                                <strong>Activity Type</strong>
                                 <select data-bind="options: venues, optionsText: 'name', optionsValue: 'id', value: venueId" class="form-control"></select>
                             </div>
                             <div class="col-md-4 text-left">
-                                <strong>Activity</strong>
-                                <select data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
+                                <strong>Sport</strong>
+                                <select id="sportSelect" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
                             </div>
                             <div class="col-md-2 text-left">
                                 <strong>Date</strong>
                                 <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
                             </div>
-                            <div class="col-md-2 text-left">
+                            <div class="col-md-2 text-left" data-bind="if: venueId() == 1">
                                 <strong>View</strong><br />
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
                                     <button type="button" class="btn btn-default" data-view="month" data-bind="click: toggleView, css: { 'active': viewType() == 'month' }">Month</button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="swimmingPool">
-                    <div class="alert alert-warning">
-                        <div class="row">
-                            <div class="col-md-3 text-left">
-                                <strong class="select-pool">Select Pool</strong>
-                                <select data-bind="options: poolTypes, optionsText: 'name', optionsValue: 'id', value: swimmingPoolSelected" class="form-control"></select>
-                            </div>
-
-                            <div class="col-md-2 text-left">
-                                <strong>Date</strong>
-                                <input type="text" class="form-control datepicker poolDatePicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
                             </div>
                         </div>
                     </div>

@@ -43,43 +43,61 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
     viewModel = function () {
         var self = this;
 
+        function filterView() {
+            var venueId = self.venueId();
+            var sportId = self.activityId();
+
+            if (venueId == 0 && sportId > 0) {
+                // Facility
+                self.showDayView(false);
+                self.showPoolView(true);
+
+                showSportsBookings(sportId);
+            } else {
+                // Group
+                self.showDayView(true);
+                self.showPoolView(false);
+            }
+        }
+
         this.venueId = ko.observable(querystring('venueId') ? querystring('venueId') : 0);
+        this.venueId.subscribe(function (val) {
+            
+            if (val == 0) {
+                if ($('.fc-view').length > 0) {
+                    $('#calenderHolder').hide();
+                }
+
+                this.viewType("day");
+            }
+
+            filterView();
+        }, this);
+
         this.venues = ko.observableArray([
             {
-                name: 'All Venues',
+                name: 'Facility Booking',
                 id: 0,
-                activities: [0]
+                activities: [2,3,4]
             },
             {
-                name: 'Aquatic Centre',
+                name: 'Group Training',
                 id: 1,
-                activities: [1,2,3]
-            },
-            {
-                name: 'Sports Halls',
-                id: 2,
-                activities: [4, 5]
-            },
-            {
-                name: 'Waterfront',
-                id: 3,
-                activities: [5]
-            },
-            {
-                name: 'Sports Museum Library',
-                id: 4,
-                activities: [1]
+                activities: [0,2,3]
             }
         ]);
 
         this.activityId = ko.observable(querystring('activityId') ? querystring('activityId') : 0);
+        this.activityId.subscribe(function () {
+            filterView();
+        }, this);
+
         this.activities = ko.observableArray([
             { name: 'All Activities', id: 0 },
-            { name: 'Swimming', id: 1 },
-            { name: 'Group training', id: 2 },
-            { name: 'Facility booking', id: 3 },
-            { name: 'Venue tours', id: 4 },
-            { name: 'Community area', id: 5 }
+            { name: 'Basketball', id: 2 },
+            { name: 'Football', id: 3 },
+            { name: 'Tennis', id: 4 },
+            { name: 'Hockey', id: 5 }
         ]);
 
         this.eventTypeId = ko.observable(0);
@@ -121,94 +139,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         
 
         var sportsDate = new Date();
-        
-        function makeLanes(start, amount, lanesTaken) {
-            var laneArray = [];
-
-            for (var i = start; i <= start + amount; i++) {
-                laneArray.push({
-                    isBooked: (i < lanesTaken)
-                });
-            }
-
-            return laneArray;
-        }
-
-        function showPools(val) {
-            var swimmingBookings = customCalendar.getEvents('swimmingBookings', self.swimmingPoolSelected());
-
-            self.timeTemplate.fullDisplay.removeAll();
-
-            for (var i = 0; i < sportsEvents.length; i++) {
-                if (val == sportsEvents[i].name) {
-                    self.currentSport = sportsEvents[i];
-                    break;
-                }
-            }
-
-            for (var i = self.currentSport.startTime; i <= self.currentSport.endTime; i += self.currentSport.increment) {
-                var description = self.currentSport.laneAmount + " Lanes Available";
-                var active = true;
-                var currentLanesTaken = 0;
-                var laneColumns = [];
-
-                sportsDate = new Date(y, m, d, i);
-
-                if (self.currentSport.name == "Swimming") {
-                    for (var o = 0; o < swimmingBookings.length; o++) {
-                        var swimmingBooking = swimmingBookings[o];
-
-                        if (+swimmingBooking.start === +sportsDate) {
-                            currentLanesTaken = swimmingBooking.lanesTaken;
-
-                            var laneAmount = (self.currentSport.laneAmount - swimmingBooking.lanesTaken);
-                            description = laneAmount + " Lanes Available";
-
-                            if (laneAmount == 0 || swimmingBooking.bookingNotAllowed) {
-                                active = false;
-                            }
-
-                            // Break if item is found.
-                            break;
-                        } else {
-                            currentLanesTaken = 0;
-                        }
-                    }
-                }
-
-                var divideAmount = (self.currentSport.laneAmount / 2);
-                for (var o = 0; o < 2; o++) {
-
-                    laneColumns.push({
-                        lanes: makeLanes(divideAmount * o, divideAmount, currentLanesTaken)
-                    });
-                }
-
-                var endDate = new Date();
-                endDate.setHours(sportsDate.getHours() + self.currentSport.increment);
-                var startTime = self.getHourByDate(new Date().setHours(i));
-
-                self.timeTemplate.fullDisplay.push({
-                    startHour: startTime,
-                    fullTime: startTime + " - " + self.getHourByDate(endDate),
-                    increment: self.currentSport.increment,
-                    description: description,
-                    linkActive: active,
-                    showDetails: ko.observable(false),
-                    laneColumns: laneColumns,
-                    eventType: "swimming"
-                })
-            }
-        }
-
-        this.swimmingPoolSelected = ko.observable(1);
-        this.swimmingPoolSelected.subscribe(function () {
-            showPools(self.sportEventName());
-        });
-
-        this.sportEventName.subscribe(function (val) {
-            showPools(val);
-        });
+       
 
         this.showSwimmingDetails = function (event, override) {
             event.showDetails(!event.showDetails());
@@ -222,8 +153,12 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
         };
 
-        this.activitiesFiltered = ko.computed(function() {
+        this.showDayView = ko.observable(true);
+        this.showPoolView = ko.observable(false);
+
+        this.activitiesFiltered = ko.computed(function () {
             var venueId = this.venueId();
+
             var activityListReturn = [];
 
             var activityList = ko.utils.arrayFirst(this.venues(), function (item) {
@@ -239,10 +174,59 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             return activityListReturn;
         }, this);
        
-        this.showDayView = ko.observable(true);
-        this.showPoolView = ko.observable(false);
+        function showSportsBookings(sportId) {
+            var sportsBookings = customCalendar.getEvents('sportsBookings', sportId);
+            var eventType;
+
+            self.timeTemplate.fullDisplay.removeAll();
+
+            for (var i = 0; i < sportsEvents.length; i++) {
+                if (sportId == sportsEvents[i].id) {
+                    self.currentSport = sportsEvents[i];
+                    break;
+                }
+            }
+
+            for (var i = self.currentSport.startTime; i <= self.currentSport.endTime; i += self.currentSport.increment) {
+                var description = self.currentSport.courts + " " + self.currentSport.prefix + (self.currentSport.courts > 1 ? "s" : "") + " Available";
+                var active = true;
+
+                sportsDate = new Date(y, m, d, i);
+
+                var endDate = new Date();
+                endDate.setHours(sportsDate.getHours() + self.currentSport.increment);
+                var startTime = self.getHourByDate(new Date().setHours(i));
+
+                for (var o = 0; o < sportsBookings.length; o++) {
+                    var sportsBooking = sportsBookings[o];
+
+                    if (+sportsBooking.start === +sportsDate) {
+                        var courtAmount = (self.currentSport.courts - sportsBooking.courtsTaken);
+                        description = courtAmount + " " + self.currentSport.prefix + (courtAmount > 1 ? "s" : "") + "  Available";
+
+                        if (courtAmount == 0 || sportsBooking.bookingNotAllowed) {
+                            active = false;
+                        }
+
+                        break;
+                    }
+                }
+
+                self.timeTemplate.fullDisplay.push({
+                    startHour: startTime,
+                    fullTime: startTime + " - " + self.getHourByDate(endDate),
+                    increment: self.currentSport.increment,
+                    description: description,
+                    linkActive: active,
+                    showDetails: ko.observable(false),
+                    eventType: self.currentSport.name.toLowerCase()
+                })
+            }
+        }
+        
+        
         this.viewType = ko.observable("day");
-        this.displayType = ko.observable("events");
+        this.displayType = ko.observable("venue");
         this.date = ko.observable(new Date());
 
         this.dayNumber = ko.computed(function () {
@@ -348,15 +332,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
         }
 
-        this.changePoolType = function (val) {
-            var bookings = customCalendar.getEvents("swimmingBookings");
-
-            var filteredBookings = _.filter(bookings, function (booking) {
-                return booking.poolId == val;
-            });
-
-            self.timeTemplate(filteredBookings);
-        };
+        
 
         this.isMonthView = ko.computed(function () {
             return this.viewType() == "month";
@@ -457,26 +433,6 @@ sbs.fullCalendarCustom.prototype.groupType = function (eventSources, type) {
     return newSource;
 }
 
-sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
-    switch (displayType) {
-        case "events":
-            return this.calendarEvents;
-            break;
-        case "activities":
-            return this.calendarActivities;
-            break;
-        case "sports":
-            return this.sportsEvents;
-            break;
-        case "swimmingBookings":
-            return _.filter(this.swimmingBookings, function (booking) {
-                return booking.poolId == filter;
-            });
-
-            break;
-    }
-}
-
 $(function () {
     customCalendar = new sbs.fullCalendarCustom();
 
@@ -525,15 +481,6 @@ $(function () {
         calendar.fullCalendar('next');
     });
 
-    if (querystring("action") == "") {
-        History.pushState({ state: 0 }, "Events", "?action=events");
-    } else {
-        if (querystring("action") == "myBookings") {
-            globalVM.showDayView(false);
-        }
-
-        $('#tabs li[data-displaytype=' + querystring("action") + '] a').tab('show');
-    }
 
     History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
         var State = History.getState(); // Note: We are using History.getState() instead of event.state
@@ -546,10 +493,4 @@ $(function () {
 
         $('#tabs li:eq(' + State.data.state + ') a').tab('show');
     });
-
-
-    // First load only
-    if (globalVM.venueId() > 0) {
-        History.pushState({ state: 1 }, "Activities", "?action=activities");
-    }
 });
