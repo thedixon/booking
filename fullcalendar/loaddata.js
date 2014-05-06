@@ -17,7 +17,7 @@
             name: "Basketball",
             startTime: 9,
             endTime: 20,
-            template: "default",
+            template: "basketball",
             increment: 1,
             price: 5.50,
             prefix: "Court",
@@ -28,7 +28,7 @@
             name: "Football",
             startTime: 9,
             endTime: 20,
-            template: "default",
+            template: "football",
             increment: 1,
             price: 7,
             courts: 5
@@ -38,7 +38,7 @@
             name: "Tennis",
             startTime: 9,
             endTime: 20,
-            template: "default",
+            template: "tennis",
             increment: 1,
             price: 8,
             courts: 5
@@ -48,7 +48,7 @@
             name: "Hockey",
             startTime: 9,
             endTime: 20,
-            template: "default",
+            template: "hockey",
             increment: 1,
             price: 5.50,
             courts: 5
@@ -112,6 +112,108 @@
             allDay: false,
             url: "http://google.com/",
             eventTypeId: 3,
+            placesLeft: 0,
+            imageLocation: 'images/pool1.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        }
+    ]
+
+    this.sportsNightsEvents = [
+        {
+            title: "Tennis",
+            displayTitle: "Tennis",
+            start: new Date(y, m, d, 8, 30),
+            end: new Date(y, m, d, 9, 30),
+            allDay: false,
+            sportId: 1,
+            placesLeft: 0,
+            imageLocation: 'images/pool2.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        },
+        {
+            title: "Basketball",
+            displayTitle: "Basketball",
+            start: new Date(y, m, d + 1, 14, 00),
+            end: new Date(y, m, d + 1, 15, 00),
+            allDay: false,
+            sportId: 2,
+            placesLeft: 0,
+            imageLocation: 'images/pool2.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        },
+        {
+            title: "Hockey",
+            displayTitle: "Hockey",
+            start: new Date(y, m, d, 12, 0),
+            end: new Date(y, m, d, 14, 0),
+            allDay: false,
+            sportId: 3,
+            placesLeft: 0,
+            imageLocation: 'images/pool2.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        },
+        {
+            title: "Tennis",
+            displayTitle: "Tennis",
+            start: new Date(y, m, d, 16, 0),
+            end: new Date(y, m, d, 18, 30),
+            allDay: false,
+            sportId: 3,
+            placesLeft: 0,
+            imageLocation: 'images/pool1.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        }
+    ]
+
+    this.paidActivitiesEvents = [
+        {
+            title: "Tennis",
+            displayTitle: "Tennis",
+            start: new Date(y, m, d, 8, 30),
+            end: new Date(y, m, d, 9, 30),
+            allDay: false,
+            sportId: 1,
+            placesLeft: 0,
+            imageLocation: 'images/pool2.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        },
+        {
+            title: "Basketball",
+            displayTitle: "Basketball",
+            start: new Date(y, m, d + 1, 14, 00),
+            end: new Date(y, m, d + 1, 15, 00),
+            allDay: false,
+            sportId: 2,
+            placesLeft: 0,
+            imageLocation: 'images/pool2.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        },
+        {
+            title: "Hockey",
+            displayTitle: "Hockey",
+            start: new Date(y, m, d, 12, 0),
+            end: new Date(y, m, d, 14, 0),
+            allDay: false,
+            sportId: 3,
+            placesLeft: 0,
+            imageLocation: 'images/pool2.jpg',
+            description: 'Testing event text just to show what it will look like once descriptions are entered.',
+            price: 5
+        },
+        {
+            title: "Tennis",
+            displayTitle: "Tennis",
+            start: new Date(y, m, d, 16, 0),
+            end: new Date(y, m, d, 18, 30),
+            allDay: false,
+            sportId: 3,
             placesLeft: 0,
             imageLocation: 'images/pool1.jpg',
             description: 'Testing event text just to show what it will look like once descriptions are entered.',

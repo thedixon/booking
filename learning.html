@@ -17,7 +17,7 @@
     <script src='./lib/underscore.js'></script>
     <script src='./fullcalendar/fullcalendar.js'></script>
     <script src='./fullcalendar/custom-functions.js'></script>
-    <script src='./fullcalendar/venues.js'></script>
+    <script src='./fullcalendar/learning.js'></script>
     <script src='./fullcalendar/shared.js'></script>
     <script src='./fullcalendar/basket.js'></script>
     <script src='./fullcalendar/loaddata.js'></script>
@@ -30,29 +30,49 @@
         <div id="tabs">
             <ul class="nav nav-tabs">
                 <li class="active" data-displaytype="events">
-                    <a href="#venue" data-toggle="tab" data-displaytype="venue" data-state="0" data-title="venue">Venue</a>
+                    <a href="#sportsNights" data-toggle="tab" data-displaytype="sportsNights" data-state="0" data-title="Sports Nights">Sports nights</a>
+                </li>
+                <li data-displaytype="events">
+                    <a href="#paidActivities" data-toggle="tab" data-displaytype="paidActivities" data-state="1" data-title="Paid Activities">Paid activities</a>
                 </li>
                 <li class="pull-right" data-displaytype="basket"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
                     <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
                 </li>
             </ul>
             <div class="tab-content top-buffer-large">
-                <div class="tab-pane active" id="venue">
+                <div class="tab-pane active" id="sportsNights">
                     <div class="alert alert-warning">
                         <div class="row">
                             <div class="col-md-4 text-left">
-                                <strong>Activity Type</strong>
-                                <select data-bind="options: venues, optionsText: 'name', optionsValue: 'id', value: venueId" class="form-control"></select>
-                            </div>
-                            <div class="col-md-4 text-left">
-                                <strong>Sport</strong>
+                                <strong>Select sport</strong>
                                 <select id="sportSelect" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
                             </div>
-                            <div class="col-md-2 text-left">
+                            <div class="col-md-2 col-md-offset-4 text-left">
                                 <strong>Date</strong>
                                 <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
                             </div>
-                            <div class="col-md-2 text-left" data-bind="if: venueId() == 1">
+                            <div class="col-md-2 text-left">
+                                <strong>View</strong><br />
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
+                                    <button type="button" class="btn btn-default" data-view="month" data-bind="click: toggleView, css: { 'active': viewType() == 'month' }">Month</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="paidActivities">
+                    <div class="alert alert-warning">
+                        <div class="row">
+                            <div class="col-md-4 text-left">
+                                <strong>Select sport</strong>
+                                <select id="Select1" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
+                            </div>
+                            <div class="col-md-2 col-md-offset-4 text-left">
+                                <strong>Date</strong>
+                                <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
+                            </div>
+                            <div class="col-md-2 text-left">
                                 <strong>View</strong><br />
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
@@ -544,7 +564,6 @@
 
                                         <h4>{{ displayTitle }}</h4>
 
-                                        <!-- ko if: $root.displayType() == 'activities' || $root.displayType() == 'venue' -->
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <i class="glyphicon glyphicon-map-marker"></i> {{ $root.getActivityName(start) }}
@@ -554,22 +573,11 @@
                                                 <i class="glyphicon glyphicon-user"></i> {{ placesLeft }} Available Slots
                                             </div>
                                         </div>
-                                        <!-- /ko -->
-
-                                        <!-- ko if: $root.displayType() == 'events' -->
-                                        <div class="row">
-                                            <div class="pull-left">
-                                                {{ description }}
-                                            </div>
-                                        </div>
-                                        <!-- /ko -->
                                     </div>
 
                                     <div class="col-md-3 text-right">
-                                        <button class="btn btn-info more-info">More Info</button>
                                         <button class="btn btn-info" 
-                                            data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
-                                                       click: $root.basket.add, enable: $root.eventsCanBook">Book</button>
+                                            data-bind="click: $root.basket.add, enable: $root.eventsCanBook">Book (free)</button>
                                     </div>
                                 </div>
                             </div>

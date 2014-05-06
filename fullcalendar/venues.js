@@ -1,38 +1,4 @@
-﻿// Variables for cache
-var calendar;
-var customCalendar;
-var currentEventSource;
-var datePicker;
-var viewModel;
-var globalVM;
-var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-var currentDate = new Date();
-var d = currentDate.getDate();
-var m = currentDate.getMonth();
-var y = currentDate.getFullYear();
-var cachedEvents = [];
-var cachedActivities = [];
-var oneDay = 24 * 60 * 60 * 1000;
-
-// Calendar options
-var calendarSmallDateFormat = true;
-
-// Filters for show/hide
-var filterLimit = 1;
-var timeFilterLimit = 6;
-
-// Timer
-var timerMinutes = 2;
-var secondsUntilBasketWarning = 30;
-
-// Further options
-var swimmingDaysShown = 7;
-var eventsNotAllowedToBookFor = 2;
-var swimmingNotAllowedToBookFor = 2;
-
-window.sbs = window.sbs || {};
+﻿window.sbs = window.sbs || {};
 
 // Custom functions 
 sbs.fullCalendarCustom = function () { }
@@ -60,7 +26,8 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
         }
 
-        this.venueId = ko.observable(querystring('venueId') ? querystring('venueId') : 0);
+        customCalendar.setupData(this);
+
         this.venueId.subscribe(function (val) {
             
             if (val == 0) {
@@ -87,7 +54,6 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
         ]);
 
-        this.activityId = ko.observable(querystring('activityId') ? querystring('activityId') : 0);
         this.activityId.subscribe(function () {
             filterView();
         }, this);
@@ -98,21 +64,6 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             { name: 'Football', id: 3 },
             { name: 'Tennis', id: 4 },
             { name: 'Hockey', id: 5 }
-        ]);
-
-        this.eventTypeId = ko.observable(0);
-        this.eventTypes = ko.observableArray([
-            { name: 'All Events', id: 0 },
-            { name: 'Experience Sports', id: 1 },
-            { name: 'Play @ Sports Hub', id: 2 },
-            { name: 'Sports Development', id: 3 }
-        ]);
-
-        this.poolTypeId = ko.observable(0);
-        this.poolTypes = ko.observableArray([
-            { name: 'Main', id: 1 },
-            { name: 'Training', id: 2 },
-            { name: 'Diving', id: 3 }
         ]);
 
         this.currentSport;
@@ -137,9 +88,6 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         // Simply pointers to the the top-level arrays.
         var sportsEvents = customCalendar.getEvents('sports');
         
-
-        var sportsDate = new Date();
-       
 
         this.showSwimmingDetails = function (event, override) {
             event.showDetails(!event.showDetails());

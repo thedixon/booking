@@ -1,4 +1,119 @@
-﻿// Get events list
+﻿// Variables for cache
+var calendar;
+var customCalendar;
+var currentEventSource;
+var datePicker;
+var viewModel;
+var globalVM;
+var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var currentDate = new Date();
+var d = currentDate.getDate();
+var m = currentDate.getMonth();
+var y = currentDate.getFullYear();
+var cachedEvents = [];
+var cachedActivities = [];
+var oneDay = 24 * 60 * 60 * 1000;
+var sportsDate = new Date();
+
+// Calendar options
+var calendarSmallDateFormat = true;
+
+// Filters for show/hide
+var filterLimit = 1;
+var timeFilterLimit = 6;
+
+// Timer
+var timerMinutes = 2;
+var secondsUntilBasketWarning = 30;
+
+// Further options
+var swimmingDaysShown = 7;
+var eventsNotAllowedToBookFor = 2;
+var swimmingNotAllowedToBookFor = 2;
+
+var loadTemplateCollection = function (file, success) {
+    $.get('templates/' + file + '.html', function (templates) {
+        $('body').append('<div style="display:none">' + templates + '<\/div>');
+        success();
+    });
+};
+
+// Load all templates
+var templates = ['default', 'swimming', 'football', 'basketball', 'hockey', 'tennis'];
+for (var i = 0; i < templates.length; i++) {
+    (function(index) {
+        loadTemplateCollection(templates[i], function () {
+            if (index + 1 == templates.length) {
+                globalVM.isTemplateLoaded(true);
+            }
+        });
+    })(i)
+}
+
+window.sbs = window.sbs || {};
+
+// Load data
+sbs.fullCalendarCustom.prototype.setupData = function (vm) {
+    vm.isTemplateLoaded = ko.observable(false);
+
+    vm.venueId = ko.observable(querystring('venueId') ? querystring('venueId') : 0);
+    vm.venues = ko.observableArray([
+        {
+            name: 'All Venues',
+            id: 0,
+            activities: [0]
+        },
+        {
+            name: 'Aquatic Centre',
+            id: 1,
+            activities: [1, 2, 3]
+        },
+        {
+            name: 'Sports Halls',
+            id: 2,
+            activities: [4, 5]
+        },
+        {
+            name: 'Waterfront',
+            id: 3,
+            activities: [5]
+        },
+        {
+            name: 'Sports Museum Library',
+            id: 4,
+            activities: [1]
+        }
+    ]);
+
+    vm.activityId = ko.observable(querystring('activityId') ? querystring('activityId') : 0);
+    vm.activities = ko.observableArray([
+        { name: 'All Activities', id: 0 },
+        { name: 'Swimming', id: 1 },
+        { name: 'Group training', id: 2 },
+        { name: 'Facility booking', id: 3 },
+        { name: 'Venue tours', id: 4 },
+        { name: 'Community area', id: 5 }
+    ]);
+
+    vm.eventTypeId = ko.observable(0);
+    vm.eventTypes = ko.observableArray([
+        { name: 'All Events', id: 0 },
+        { name: 'Experience Sports', id: 1 },
+        { name: 'Play @ Sports Hub', id: 2 },
+        { name: 'Sports Development', id: 3 }
+    ]);
+
+    vm.poolTypeId = ko.observable(0);
+    vm.poolTypes = ko.observableArray([
+        { name: 'Main', id: 1 },
+        { name: 'Training', id: 2 },
+        { name: 'Diving', id: 3 }
+    ]);
+}
+
+// Get events list
 sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
     switch (displayType) {
         case "events":
@@ -23,6 +138,16 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
                 return booking.sportId == filter;
             });
 
+            break;
+        case "sportsNights":
+            return _.filter(this.sportsNightsEvents, function (booking) {
+                return booking.sportId == filter;
+            });
+            break;
+        case "paidActivities":
+            return _.filter(this.paidActivitiesEvents, function (booking) {
+                return booking.sportId == filter;
+            });
             break;
     }
 }
@@ -112,6 +237,9 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                         (activityId > 0 ? event.sportId == activityId : true);
                 });
 
+                break;
+            case "sportsNights": case "paidActivities":
+                filteredEvents = events;
                 break;
         }
 
