@@ -42,3 +42,19 @@ ko.bindingHandlers.timer = {
         }
     }
 };
+
+jQuery.whenAll = function (deferreds) {
+    var lastResolved = 0;
+
+    var wrappedDeferreds = [];
+
+    for (var i = 0; i < deferreds.length; i++) {
+        wrappedDeferreds.push(jQuery.Deferred());
+
+        deferreds[i].always(function () {
+            wrappedDeferreds[lastResolved++].resolve(arguments);
+        });
+    }
+
+    return jQuery.when.apply(jQuery, wrappedDeferreds).promise();
+};

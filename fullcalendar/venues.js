@@ -384,61 +384,63 @@ sbs.fullCalendarCustom.prototype.groupType = function (eventSources, type) {
 $(function () {
     customCalendar = new sbs.fullCalendarCustom();
 
-    customCalendar.loadData();
-    customCalendar.setupKnockout();
-    customCalendar.setupEvents();
+    customCalendar.loadData().then(function () {;
+        customCalendar.setupKnockout();
+        customCalendar.setupEvents();
+        customCalendar.loadTemplates();
 
-    currentEventSource = customCalendar.getEvents('events');
-    currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+        currentEventSource = customCalendar.getEvents('events');
+        currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+
+        $("#calendar").fullCalendar({
+            header: {
+                left: "1",
+                center: "title",
+                right: "1"
+            },
+            titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
+            timeFormat: '',
+            defaultView: "month",
+            selectable: true,
+            selectHelper: true,
+            eventClick: function (calEvent, jsEvent, view) {
+                globalVM.showDayView(true);
+                globalVM.date(calEvent.start);
+
+                $('#dayView').scrollView();
+
+            },
+            firstDay: 1,
+            editable: true,
+            eventSources: [
+                currentEventSource
+            ]
+        });
+
+        calendar = $("#calendar");
+
+        $('#calenderHolder').hide();
+
+        // These events need to go here, after the calendar is initialised.
+        $('.previousCalendarMonth').on("click", function () {
+            calendar.fullCalendar('prev');
+        });
+
+        $('.nextCalendarMonth').on("click", function () {
+            calendar.fullCalendar('next');
+        });
+
+        History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+            var State = History.getState(); // Note: We are using History.getState() instead of event.state
+
+            if (State.data.state == 3) {
+                globalVM.basket.showPayment(false);
+            } else if (State.data.state == 5) {
+                globalVM.basket.showPayment(true);
+            }
+
+            $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+        });
+    });
     
-    $("#calendar").fullCalendar({
-        header: {
-            left: "1",
-            center: "title",
-            right: "1"
-        },
-        titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
-        timeFormat: '',
-        defaultView: "month",
-        selectable: true,
-        selectHelper: true,
-        eventClick: function (calEvent, jsEvent, view) {
-            globalVM.showDayView(true);
-            globalVM.date(calEvent.start);
-
-            $('#dayView').scrollView();
-
-        },
-        firstDay: 1,
-        editable: true,
-        eventSources: [
-            currentEventSource
-        ]
-    });
-
-    calendar = $("#calendar");
-
-    $('#calenderHolder').hide();
-
-    // These events need to go here, after the calendar is initialised.
-    $('.previousCalendarMonth').on("click", function () {
-        calendar.fullCalendar('prev');
-    });
-
-    $('.nextCalendarMonth').on("click", function () {
-        calendar.fullCalendar('next');
-    });
-
-
-    History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-        var State = History.getState(); // Note: We are using History.getState() instead of event.state
-
-        if (State.data.state == 3) {
-            globalVM.basket.showPayment(false);
-        } else if (State.data.state == 5) {
-            globalVM.basket.showPayment(true);
-        }
-
-        $('#tabs li:eq(' + State.data.state + ') a').tab('show');
-    });
 });

@@ -26,6 +26,26 @@
 </head>
 
 <body>
+    <div class="modal fade" id="moreInfoModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+              <div class="row" data-bind="with: moreInfo">
+                  <div class="col-md-3">
+                      <img data-bind="attr: { src: imageLocation }" class="img-responsive img-rounded" />
+                  </div>
+                  <div class="col-md-9">
+                      {{ longDescription }}
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+             <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="venueContainer" class="container">
         <div id="tabs">
             <ul class="nav nav-tabs">
@@ -566,7 +586,7 @@
                                     </div>
 
                                     <div class="col-md-3 text-right">
-                                        <button class="btn btn-info more-info">More Info</button>
+                                        <button class="btn btn-info more-info" data-bind="$root.showMoreInfo">More Info</button>
                                         <button class="btn btn-info" 
                                             data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
                                                        click: $root.basket.add, enable: $root.eventsCanBook">Book</button>

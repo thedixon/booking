@@ -11,7 +11,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
         customCalendar.setupData(this);
 
-        this.currentSport;
+        this.currentSport = ko.observable();
         this.sportEventName = ko.observable();
         this.timeTemplate = ko.observableArray();
         this.timeTemplate.fullDisplay = ko.observableArray();
@@ -27,13 +27,12 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         }, self.timeTemplate);
 
         this.sportTemplate = function () {
-            return self.currentSport.template ? self.currentSport.template + "Template" : "defaultTemplate";
+            var sport = self.currentSport();
+
+            return sport && sport.template ? sport.template + "Template" : "defaultTemplate";
         }
         
         // Simply pointers to the the top-level arrays.
-        var sportsEvents = customCalendar.getEvents('sports');
-        
-        
         function makeLanes(start, amount, lanesTaken) {
             var laneArray = [];
 
@@ -47,33 +46,39 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         }
 
         function showPools(val) {
+            var sportsEvents = customCalendar.getEvents('sports');
+
             var swimmingBookings = customCalendar.getEvents('swimmingBookings', self.swimmingPoolSelected());
 
             self.timeTemplate.fullDisplay.removeAll();
 
             for (var i = 0; i < sportsEvents.length; i++) {
                 if (val == sportsEvents[i].name) {
-                    self.currentSport = sportsEvents[i];
+                    self.currentSport(sportsEvents[i]);
                     break;
                 }
             }
 
-            for (var i = self.currentSport.startTime; i <= self.currentSport.endTime; i += self.currentSport.increment) {
-                var description = self.currentSport.laneAmount + " Lanes Available";
+            var startTime = Number(self.currentSport().startTime);
+            var endTime = Number(self.currentSport().endTime);
+            var incrament = Number(self.currentSport().increment);
+
+            for (var i = startTime; i <= endTime; i += incrament) {
+                var description = self.currentSport().laneAmount + " Lanes Available";
                 var active = true;
                 var currentLanesTaken = 0;
                 var laneColumns = [];
 
                 sportsDate = new Date(y, m, d, i);
 
-                if (self.currentSport.name == "Swimming") {
+                if (self.currentSport().name == "Swimming") {
                     for (var o = 0; o < swimmingBookings.length; o++) {
                         var swimmingBooking = swimmingBookings[o];
 
-                        if (+swimmingBooking.start === +sportsDate) {
+                        if (+new Date(swimmingBooking.start) === +sportsDate) {
                             currentLanesTaken = swimmingBooking.lanesTaken;
 
-                            var laneAmount = (self.currentSport.laneAmount - swimmingBooking.lanesTaken);
+                            var laneAmount = (self.currentSport().laneAmount - swimmingBooking.lanesTaken);
                             description = laneAmount + " Lanes Available";
 
                             if (laneAmount == 0 || swimmingBooking.bookingNotAllowed) {
@@ -88,28 +93,27 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
                     }
                 }
 
-                var divideAmount = (self.currentSport.laneAmount / 2);
+                var divideAmount = (self.currentSport().laneAmount / 2);
                 for (var o = 0; o < 2; o++) {
-
                     laneColumns.push({
                         lanes: makeLanes(divideAmount * o, divideAmount, currentLanesTaken)
                     });
                 }
 
                 var endDate = new Date();
-                endDate.setHours(sportsDate.getHours() + self.currentSport.increment);
+                endDate.setHours(sportsDate.getHours() + incrament);
                 var startTime = self.getHourByDate(new Date().setHours(i));
 
                 self.timeTemplate.fullDisplay.push({
                     startHour: startTime,
                     fullTime: startTime + " - " + self.getHourByDate(endDate),
-                    increment: self.currentSport.increment,
+                    increment: incrament,
                     description: description,
                     linkActive: active,
                     showDetails: ko.observable(false),
                     laneColumns: laneColumns,
                     eventType: "swimming"
-                })
+                });
             }
         }
 
@@ -134,8 +138,9 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
         };
 
-        this.activitiesFiltered = ko.computed(function() {
+        this.activitiesFiltered = ko.computed(function () {
             var venueId = this.venueId();
+
             var activityListReturn = [];
 
             var activityList = ko.utils.arrayFirst(this.venues(), function (item) {
@@ -390,78 +395,92 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
 }
 
 $(function () {
+    $('#loader').show();
+
     customCalendar = new sbs.fullCalendarCustom();
 
-    customCalendar.loadData();
-    customCalendar.setupKnockout();
-    customCalendar.setupEvents();
+    customCalendar.loadData().then(function () {
+        
+        customCalendar.setupKnockout();
+        customCalendar.setupEvents();
+        customCalendar.loadTemplates();
 
-    currentEventSource = customCalendar.getEvents('events');
-    currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+        currentEventSource = customCalendar.getEvents('events');
+        currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+
+        
+
+        calendar = $("#calendar");
+
+        setTimeout(function () {
+            $('.loader').removeClass("active").hide();
+            $('#main').show();
+
+            $("#calendar").fullCalendar({
+                header: {
+                    left: "1",
+                    center: "title",
+                    right: "1"
+                },
+                titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
+                timeFormat: '',
+                defaultView: "month",
+                selectable: true,
+                selectHelper: true,
+                eventClick: function (calEvent, jsEvent, view) {
+                    globalVM.showDayView(true);
+                    globalVM.date(calEvent.start);
+
+                    $('#dayView').scrollView();
+
+                },
+                firstDay: 1,
+                editable: true,
+                eventSources: [
+                    currentEventSource
+                ]
+            });
+
+            $('#calenderHolder').hide();
+
+            // These events need to go here, after the calendar is initialised.
+            $('.previousCalendarMonth').on("click", function () {
+                calendar.fullCalendar('prev');
+            });
+
+            $('.nextCalendarMonth').on("click", function () {
+                calendar.fullCalendar('next');
+            });
+        }, 2000);
+
+        
+
+        // First load only
+        if (globalVM.venueId() > 0) {
+            History.pushState({ state: 1 }, "Activities", "?action=activities");
+        }
+
+        if (querystring("action") == "") {
+            History.pushState({ state: 0 }, "Events", "?action=events");
+        } else {
+            if (querystring("action") == "myBookings") {
+                globalVM.showDayView(false);
+            }
+
+            $('#tabs li[data-displaytype=' + querystring("action") + '] a').tab('show');
+        }
+
+        History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+            var State = History.getState(); // Note: We are using History.getState() instead of event.state
+
+            if (State.data.state == 3) {
+                globalVM.basket.showPayment(false);
+            } else if (State.data.state == 5) {
+                globalVM.basket.showPayment(true);
+            }
+
+            $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+        });
+    });
     
-    $("#calendar").fullCalendar({
-        header: {
-            left: "1",
-            center: "title",
-            right: "1"
-        },
-        titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
-        timeFormat: '',
-        defaultView: "month",
-        selectable: true,
-        selectHelper: true,
-        eventClick: function (calEvent, jsEvent, view) {
-            globalVM.showDayView(true);
-            globalVM.date(calEvent.start);
-
-            $('#dayView').scrollView();
-
-        },
-        firstDay: 1,
-        editable: true,
-        eventSources: [
-            currentEventSource
-        ]
-    });
-
-    calendar = $("#calendar");
-
-    $('#calenderHolder').hide();
-
-    // These events need to go here, after the calendar is initialised.
-    $('.previousCalendarMonth').on("click", function () {
-        calendar.fullCalendar('prev');
-    });
-
-    $('.nextCalendarMonth').on("click", function () {
-        calendar.fullCalendar('next');
-    });
-
-    if (querystring("action") == "") {
-        History.pushState({ state: 0 }, "Events", "?action=events");
-    } else {
-        if (querystring("action") == "myBookings") {
-            globalVM.showDayView(false);
-        }
-
-        $('#tabs li[data-displaytype=' + querystring("action") + '] a').tab('show');
-    }
-
-    History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-        var State = History.getState(); // Note: We are using History.getState() instead of event.state
-
-        if (State.data.state == 3) {
-            globalVM.basket.showPayment(false);
-        } else if (State.data.state == 5) {
-            globalVM.basket.showPayment(true);
-        }
-
-        $('#tabs li:eq(' + State.data.state + ') a').tab('show');
-    });
-
-
-    // First load only
-    if (globalVM.venueId() > 0) {
-        History.pushState({ state: 1 }, "Activities", "?action=activities");
-    }
 });

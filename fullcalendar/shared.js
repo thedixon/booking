@@ -40,19 +40,21 @@ var loadTemplateCollection = function (file, success) {
     });
 };
 
-// Load all templates
-var templates = ['default', 'swimming', 'football', 'basketball', 'hockey', 'tennis'];
-for (var i = 0; i < templates.length; i++) {
-    (function(index) {
-        loadTemplateCollection(templates[i], function () {
-            if (index + 1 == templates.length) {
-                globalVM.isTemplateLoaded(true);
-            }
-        });
-    })(i)
-}
-
 window.sbs = window.sbs || {};
+
+sbs.fullCalendarCustom.prototype.loadTemplates = function () {
+    // Load all templates
+    var templates = ['default', 'swimming', 'football', 'basketball', 'hockey', 'tennis'];
+    for (var i = 0; i < templates.length; i++) {
+        (function (index) {
+            loadTemplateCollection(templates[i], function () {
+                if (index + 1 == templates.length) {
+                    globalVM.isTemplateLoaded(true);
+                }
+            });
+        })(i)
+    }
+}
 
 // Load data
 sbs.fullCalendarCustom.prototype.setupData = function (vm) {
@@ -218,6 +220,7 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                     return new Date(event.start).toDateString() == theDate.toDateString() &&
                         (eventTypeId > 0 ? event.eventTypeId == eventTypeId : true);
                 });
+
                 break;
             case "activities":
                 if (cachedActivities[theDate + "_" + venueId + "_" + activityId]) {
@@ -275,6 +278,13 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
 
         return makeArray;
     }, vm);
+
+    vm.moreInfo = ko.observable();
+    vm.showMoreInfo = function () {
+        vm.moreInfo(this);
+
+        $('#moreInfoModal').modal('show');
+    }
 }
 
 function changeDisplayType(displayType) {

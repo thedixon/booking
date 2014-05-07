@@ -393,61 +393,62 @@ sbs.fullCalendarCustom.prototype.groupType = function (eventSources, type) {
 $(function () {
     customCalendar = new sbs.fullCalendarCustom();
 
-    customCalendar.loadData();
-    customCalendar.setupKnockout();
-    customCalendar.setupEvents();
+    customCalendar.loadData().then(function () {;
+        customCalendar.setupKnockout();
+        customCalendar.setupEvents();
+        customCalendar.loadTemplates();
 
-    currentEventSource = customCalendar.getEvents('events');
-    currentEventSource = customCalendar.groupType(currentEventSource, "Event");
-    
-    $("#calendar").fullCalendar({
-        header: {
-            left: "1",
-            center: "title",
-            right: "1"
-        },
-        titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
-        timeFormat: '',
-        defaultView: "month",
-        selectable: true,
-        selectHelper: true,
-        eventClick: function (calEvent, jsEvent, view) {
-            globalVM.showDayView(true);
-            globalVM.date(calEvent.start);
+        currentEventSource = customCalendar.getEvents('events');
+        currentEventSource = customCalendar.groupType(currentEventSource, "Event");
 
-            $('#dayView').scrollView();
+        $("#calendar").fullCalendar({
+            header: {
+                left: "1",
+                center: "title",
+                right: "1"
+            },
+            titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
+            timeFormat: '',
+            defaultView: "month",
+            selectable: true,
+            selectHelper: true,
+            eventClick: function (calEvent, jsEvent, view) {
+                globalVM.showDayView(true);
+                globalVM.date(calEvent.start);
 
-        },
-        firstDay: 1,
-        editable: true,
-        eventSources: [
-            currentEventSource
-        ]
-    });
+                $('#dayView').scrollView();
 
-    calendar = $("#calendar");
+            },
+            firstDay: 1,
+            editable: true,
+            eventSources: [
+                currentEventSource
+            ]
+        });
 
-    $('#calenderHolder').hide();
+        calendar = $("#calendar");
 
-    // These events need to go here, after the calendar is initialised.
-    $('.previousCalendarMonth').on("click", function () {
-        calendar.fullCalendar('prev');
-    });
+        $('#calenderHolder').hide();
 
-    $('.nextCalendarMonth').on("click", function () {
-        calendar.fullCalendar('next');
-    });
+        // These events need to go here, after the calendar is initialised.
+        $('.previousCalendarMonth').on("click", function () {
+            calendar.fullCalendar('prev');
+        });
 
+        $('.nextCalendarMonth').on("click", function () {
+            calendar.fullCalendar('next');
+        });
 
-    History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-        var State = History.getState(); // Note: We are using History.getState() instead of event.state
+        History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+            var State = History.getState(); // Note: We are using History.getState() instead of event.state
 
-        if (State.data.state == 3) {
-            globalVM.basket.showPayment(false);
-        } else if (State.data.state == 5) {
-            globalVM.basket.showPayment(true);
-        }
+            if (State.data.state == 3) {
+                globalVM.basket.showPayment(false);
+            } else if (State.data.state == 5) {
+                globalVM.basket.showPayment(true);
+            }
 
-        $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+            $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+        });
     });
 });

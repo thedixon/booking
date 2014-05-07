@@ -71,13 +71,15 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
             activity = "Swimming"
         }
 
+        var price = Number(item.price);
+
         self.basket.items.push({
             title: item.displayTitle,
             activityName: activity,
-            price: item.price
+            price: price
         });
 
-        self.basket.total(self.basket.total() + item.price);
+        self.basket.total(self.basket.total() + price);
 
         if (self.basket.items().length == 1) {
             // Move to basket, if not then just leave them.
