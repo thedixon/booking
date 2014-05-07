@@ -1,0 +1,26 @@
+﻿[
+	{
+		 "start":"2014-05-07 08:00:00",
+	     "end":"2014-05-07 13:00:00",
+		 "title":"Long Jump Training",
+		 "displayTitle":"Long Jump Training",
+		 "placesLeft":"20",
+		 "price":"30",
+		 "eventTypeId":"1",
+		 "shortDescription": "Description of event",
+		 "longDescription": "Description of event but a lot longer Description of event but a lot longer Description of event but a lot longer Description of event but a lot longer Description of event but a lot longer Description of event but a lot longer",
+		 "imageLocation": "images/pool1.jpg"
+	},
+	{
+		"start":"2014-05-28 08:00:00",
+		"end":"2014-05-28 10:00:00",
+		"title":"Test Event",
+		"displayTitle":"Test Event",
+		"placesLeft":"20",
+		"price":"20",
+		"eventTypeId":"1",
+		"shortDescription": "Description of event",
+		"longDescription": "Description of event but a lot lot longer Description of event but a lot lot longer Description of event but a lot lot longer Description of event but a lot lot longer Description of event but a lot lot longer",
+		"imageLocation": "images/pool2.jpg"
+	}
+]
