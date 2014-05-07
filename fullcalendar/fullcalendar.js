@@ -5475,7 +5475,7 @@
                     'background-color': '#fcf8e3',
                     'border': '1px solid #faebcc',
                     'color': '#8a6d3b',
-                    'height': $('.fc-day').eq(0).height()
+                    'height': $('.fc-day').eq(0).height() - 2
                 });
             });
         }

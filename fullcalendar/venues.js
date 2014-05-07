@@ -66,7 +66,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             { name: 'Hockey', id: 5 }
         ]);
 
-        this.currentSport;
+        this.currentSport = ko.observable();
         this.sportEventName = ko.observable();
         this.timeTemplate = ko.observableArray();
         this.timeTemplate.fullDisplay = ko.observableArray();
@@ -82,7 +82,8 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         }, self.timeTemplate);
 
         this.sportTemplate = function () {
-            return self.currentSport.template ? self.currentSport.template + "Template" : "defaultTemplate";
+            var sport = self.currentSport();
+            return sport && sport.template ? sport.template + "Template" : "defaultTemplate";
         }
         
         // Simply pointers to the the top-level arrays.
@@ -130,19 +131,23 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
             for (var i = 0; i < sportsEvents.length; i++) {
                 if (sportId == sportsEvents[i].id) {
-                    self.currentSport = sportsEvents[i];
+                    self.currentSport(sportsEvents[i]);
                     break;
                 }
             }
 
-            for (var i = self.currentSport.startTime; i <= self.currentSport.endTime; i += self.currentSport.increment) {
-                var description = self.currentSport.courts + " " + self.currentSport.prefix + (self.currentSport.courts > 1 ? "s" : "") + " Available";
+            var startTime = Number(self.currentSport().startTime);
+            var endTime = Number(self.currentSport().endTime);
+            var incrament = Number(self.currentSport().increment);
+
+            for (var i = startTime; i <= endTime; i += incrament) {
+                var description = self.currentSport().courts + " " + self.currentSport().prefix + (self.currentSport().courts > 1 ? "s" : "") + " Available";
                 var active = true;
 
                 sportsDate = new Date(y, m, d, i);
 
                 var endDate = new Date();
-                endDate.setHours(sportsDate.getHours() + self.currentSport.increment);
+                endDate.setHours(sportsDate.getHours() + incrament);
                 var startTime = self.getHourByDate(new Date().setHours(i));
 
                 for (var o = 0; o < sportsBookings.length; o++) {
@@ -150,7 +155,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
                     if (+sportsBooking.start === +sportsDate) {
                         var courtAmount = (self.currentSport.courts - sportsBooking.courtsTaken);
-                        description = courtAmount + " " + self.currentSport.prefix + (courtAmount > 1 ? "s" : "") + "  Available";
+                        description = courtAmount + " " + self.currentSport().prefix + (courtAmount > 1 ? "s" : "") + "  Available";
 
                         if (courtAmount == 0 || sportsBooking.bookingNotAllowed) {
                             active = false;
@@ -163,11 +168,11 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
                 self.timeTemplate.fullDisplay.push({
                     startHour: startTime,
                     fullTime: startTime + " - " + self.getHourByDate(endDate),
-                    increment: self.currentSport.increment,
+                    increment: incrament,
                     description: description,
                     linkActive: active,
                     showDetails: ko.observable(false),
-                    eventType: self.currentSport.name.toLowerCase()
+                    eventType: self.currentSport().name.toLowerCase()
                 })
             }
         }
@@ -384,62 +389,69 @@ sbs.fullCalendarCustom.prototype.groupType = function (eventSources, type) {
 $(function () {
     customCalendar = new sbs.fullCalendarCustom();
 
-    customCalendar.loadData().then(function () {;
+    customCalendar.loadData().then(function () {
         customCalendar.setupKnockout();
-        customCalendar.setupEvents();
-        customCalendar.loadTemplates();
 
-        currentEventSource = customCalendar.getEvents('events');
-        currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+        customCalendar.loadTemplates(globalVM.isTemplateLoaded).then(function () {
+            customCalendar.setupEvents();
 
-        $("#calendar").fullCalendar({
-            header: {
-                left: "1",
-                center: "title",
-                right: "1"
-            },
-            titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
-            timeFormat: '',
-            defaultView: "month",
-            selectable: true,
-            selectHelper: true,
-            eventClick: function (calEvent, jsEvent, view) {
-                globalVM.showDayView(true);
-                globalVM.date(calEvent.start);
+            currentEventSource = customCalendar.getEvents('events');
+            currentEventSource = customCalendar.groupType(currentEventSource, "Event");
 
-                $('#dayView').scrollView();
+            setTimeout(function () {
+                $('.loader').removeClass("active").hide();
+                $('#main').show();
 
-            },
-            firstDay: 1,
-            editable: true,
-            eventSources: [
-                currentEventSource
-            ]
-        });
+                $("#calendar").fullCalendar({
+                    header: {
+                        left: "1",
+                        center: "title",
+                        right: "1"
+                    },
+                    titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
+                    timeFormat: '',
+                    defaultView: "month",
+                    selectable: true,
+                    selectHelper: true,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        globalVM.showDayView(true);
+                        globalVM.date(calEvent.start);
 
-        calendar = $("#calendar");
+                        $('#dayView').scrollView();
 
-        $('#calenderHolder').hide();
+                    },
+                    firstDay: 1,
+                    editable: true,
+                    eventSources: [
+                        currentEventSource
+                    ]
+                });
 
-        // These events need to go here, after the calendar is initialised.
-        $('.previousCalendarMonth').on("click", function () {
-            calendar.fullCalendar('prev');
-        });
+                calendar = $("#calendar");
 
-        $('.nextCalendarMonth').on("click", function () {
-            calendar.fullCalendar('next');
-        });
+                $('#calenderHolder').hide();
 
-        History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-            var State = History.getState(); // Note: We are using History.getState() instead of event.state
+                // These events need to go here, after the calendar is initialised.
+                $('.previousCalendarMonth').on("click", function () {
+                    calendar.fullCalendar('prev');
+                });
 
-            if (State.data.state == 3) {
-                globalVM.basket.showPayment(false);
-            } else if (State.data.state == 5) {
-                globalVM.basket.showPayment(true);
-            }
+                $('.nextCalendarMonth').on("click", function () {
+                    calendar.fullCalendar('next');
+                });
+            }, 2000);
 
-            $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+            History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+                var State = History.getState(); // Note: We are using History.getState() instead of event.state
+
+                if (State.data.state == 3) {
+                    globalVM.basket.showPayment(false);
+                } else if (State.data.state == 5) {
+                    globalVM.basket.showPayment(true);
+                }
+
+                $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+            });
         });
     });
     

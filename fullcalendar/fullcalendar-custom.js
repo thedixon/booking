@@ -11,6 +11,22 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
         customCalendar.setupData(this);
 
+        this.eventTypeId.subscribe(function () {
+            changeDisplayType(this.displayType());
+        }, this);
+
+        this.venueId.subscribe(function () {
+            if (calendar) {
+                changeDisplayType(this.displayType());
+            }
+        }, this);
+
+        this.activityId.subscribe(function () {
+            if (calendar) {
+                changeDisplayType(this.displayType());
+            }
+        }, this);
+
         this.currentSport = ko.observable();
         this.sportEventName = ko.observable();
         this.timeTemplate = ko.observableArray();
@@ -374,85 +390,61 @@ sbs.fullCalendarCustom.prototype.groupType = function (eventSources, type) {
     return newSource;
 }
 
-sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
-    switch (displayType) {
-        case "events":
-            return this.calendarEvents;
-            break;
-        case "activities":
-            return this.calendarActivities;
-            break;
-        case "sports":
-            return this.sportsEvents;
-            break;
-        case "swimmingBookings":
-            return _.filter(this.swimmingBookings, function (booking) {
-                return booking.poolId == filter;
-            });
-
-            break;
-    }
-}
-
 $(function () {
-    $('#loader').show();
-
     customCalendar = new sbs.fullCalendarCustom();
 
     customCalendar.loadData().then(function () {
-        
         customCalendar.setupKnockout();
-        customCalendar.setupEvents();
-        customCalendar.loadTemplates();
 
-        currentEventSource = customCalendar.getEvents('events');
-        currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+        customCalendar.loadTemplates(globalVM.isTemplateLoaded).then(function () {
+            customCalendar.setupEvents();
 
-        
+            currentEventSource = customCalendar.getEvents('events');
+            currentEventSource = customCalendar.groupType(currentEventSource, "Event");
 
-        calendar = $("#calendar");
+            setTimeout(function () {
+                $('.loader').removeClass("active").hide();
+                $('#main').show();
 
-        setTimeout(function () {
-            $('.loader').removeClass("active").hide();
-            $('#main').show();
+                $("#calendar").fullCalendar({
+                    header: {
+                        left: "1",
+                        center: "title",
+                        right: "1"
+                    },
+                    titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
+                    timeFormat: '',
+                    defaultView: "month",
+                    selectable: true,
+                    selectHelper: true,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        globalVM.showDayView(true);
+                        globalVM.date(calEvent.start);
 
-            $("#calendar").fullCalendar({
-                header: {
-                    left: "1",
-                    center: "title",
-                    right: "1"
-                },
-                titleFormat: (calendarSmallDateFormat ? "MMMM" : "MMMM, yyyy"),
-                timeFormat: '',
-                defaultView: "month",
-                selectable: true,
-                selectHelper: true,
-                eventClick: function (calEvent, jsEvent, view) {
-                    globalVM.showDayView(true);
-                    globalVM.date(calEvent.start);
+                        $('#dayView').scrollView();
 
-                    $('#dayView').scrollView();
+                    },
+                    firstDay: 1,
+                    editable: true,
+                    eventSources: [
+                        currentEventSource
+                    ]
+                });
 
-                },
-                firstDay: 1,
-                editable: true,
-                eventSources: [
-                    currentEventSource
-                ]
-            });
+                calendar = $("#calendar");
 
-            $('#calenderHolder').hide();
+                $('#calenderHolder').hide();
 
-            // These events need to go here, after the calendar is initialised.
-            $('.previousCalendarMonth').on("click", function () {
-                calendar.fullCalendar('prev');
-            });
+                // These events need to go here, after the calendar is initialised.
+                $('.previousCalendarMonth').on("click", function () {
+                    calendar.fullCalendar('prev');
+                });
 
-            $('.nextCalendarMonth').on("click", function () {
-                calendar.fullCalendar('next');
-            });
-        }, 2000);
-
+                $('.nextCalendarMonth').on("click", function () {
+                    calendar.fullCalendar('next');
+                });
+            }, 2000);
+        });
         
 
         // First load only

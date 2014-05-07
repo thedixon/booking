@@ -42,18 +42,31 @@ var loadTemplateCollection = function (file, success) {
 
 window.sbs = window.sbs || {};
 
-sbs.fullCalendarCustom.prototype.loadTemplates = function () {
+sbs.fullCalendarCustom.prototype.loadTemplates = function (templatesLoaded) {
     // Load all templates
-    var templates = ['default', 'swimming', 'football', 'basketball', 'hockey', 'tennis'];
-    for (var i = 0; i < templates.length; i++) {
-        (function (index) {
-            loadTemplateCollection(templates[i], function () {
-                if (index + 1 == templates.length) {
-                    globalVM.isTemplateLoaded(true);
-                }
-            });
-        })(i)
+    function load() {
+        return $.Deferred(function () {
+            var self = this;
+
+            var templates = ['default', 'swimming', 'football', 'basketball', 'hockey', 'tennis'];
+            for (var i = 0; i < templates.length; i++) {
+                (function (index) {
+                    loadTemplateCollection(templates[i], function () {
+                        if (index + 1 == templates.length) {
+                            self.resolve();
+                        }
+                    });
+                })(i)
+            }
+        });
     }
+
+    function done() {
+        templatesLoaded(true);
+    }
+
+    return $.when(load())
+            .done(done);
 }
 
 // Load data
@@ -116,12 +129,32 @@ sbs.fullCalendarCustom.prototype.setupData = function (vm) {
 }
 
 // Get events list
-sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter) {
+sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter, filter2) {
     switch (displayType) {
         case "events":
+            if (filter > 0) {
+                return _.filter(this.calendarEvents, function (event) {
+                    return event.eventTypeId == filter;
+                });
+            }
+
             return this.calendarEvents;
+
             break;
         case "activities":
+            if (filter > 0) {
+                if (filter2 > 0) {
+                    return _.filter(this.calendarActivities, function (event) {
+                        (filter2 > 0 ? event.venueId == filter2 : true) &&
+                        (filter > 0 ? event.activityId == filter : true);
+                    });
+                }
+
+                return _.filter(this.calendarActivities, function (event) {
+                    return event.activityId == filter;
+                });
+            }
+
             return this.calendarActivities;
             break;
         case "sports":
@@ -204,8 +237,8 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
         var displayType = this.displayType();
         var theDate = this.date();
         var activityId = this.activityId();
-        var events = scope.getEvents(displayType, activityId);
         var venueId = this.venueId();
+        var events = scope.getEvents(displayType, activityId, venueId);
         var eventTypeId = this.eventTypeId();
         var filteredEvents;
 
@@ -292,18 +325,22 @@ function changeDisplayType(displayType) {
 
     switch (displayType) {
         case "events":
-            globalVM.showPoolView(false);
-            globalVM.showDayView(true);
+            if (!globalVM.isMonthView()) {
+                globalVM.showPoolView(false);
+                globalVM.showDayView(true);
+            }
 
-            currentEventSource = customCalendar.groupType(customCalendar.getEvents("events"), "Event");
+            currentEventSource = customCalendar.groupType(customCalendar.getEvents("events", globalVM.eventTypeId()), "Event");
 
             calendar.fullCalendar('addEventSource', currentEventSource);
             break;
         case "activities":
-            globalVM.showPoolView(false);
-            globalVM.showDayView(true);
+            if (!globalVM.isMonthView()) {
+                globalVM.showPoolView(false);
+                globalVM.showDayView(true);
+            }
 
-            currentEventSource = customCalendar.groupType(customCalendar.getEvents("activities"), "Activity");
+            currentEventSource = customCalendar.groupType(customCalendar.getEvents("activities", globalVM.activityId(), globalVM.venueId()), "Activity");
 
             calendar.fullCalendar('addEventSource', currentEventSource);
             break;
