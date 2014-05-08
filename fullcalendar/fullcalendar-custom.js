@@ -452,26 +452,32 @@ $(function () {
             History.pushState({ state: 1 }, "Activities", "?action=activities");
         }
 
-        if (querystring("action") == "") {
+        var action = querystring("action");
+
+        if (action == "") {
             History.pushState({ state: 0 }, "Events", "?action=events");
         } else {
-            if (querystring("action") == "myBookings") {
+            if (action == "myBookings") {
                 globalVM.showDayView(false);
+            } else if (action == "payment") {
+                action = "basket";
             }
 
-            $('#tabs li[data-displaytype=' + querystring("action") + '] a').tab('show');
+            $('#tabs li[data-displaytype=' + action + '] a').tab('show');
         }
 
         History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
             var State = History.getState(); // Note: We are using History.getState() instead of event.state
+            var stateToGoTo = State.data.state;
 
             if (State.data.state == 3) {
                 globalVM.basket.showPayment(false);
             } else if (State.data.state == 5) {
                 globalVM.basket.showPayment(true);
+                stateToGoTo = 3;
             }
 
-            $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+            $('#tabs li:eq(' + stateToGoTo + ') a').tab('show');
         });
     });
     

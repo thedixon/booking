@@ -443,14 +443,16 @@ $(function () {
 
             History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
                 var State = History.getState(); // Note: We are using History.getState() instead of event.state
+                var stateToGoTo = State.data.state;
 
                 if (State.data.state == 3) {
                     globalVM.basket.showPayment(false);
                 } else if (State.data.state == 5) {
                     globalVM.basket.showPayment(true);
+                    stateToGoTo = 3;
                 }
 
-                $('#tabs li:eq(' + State.data.state + ') a').tab('show');
+                $('#tabs li:eq(' + stateToGoTo + ') a').tab('show');
             });
         });
     });

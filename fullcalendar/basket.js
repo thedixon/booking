@@ -38,7 +38,9 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.remove = function () {
+        self.basket.total(self.basket.total() - this.price);
         self.basket.items.remove(this);
+        
 
         if (self.basket.items().length == 0) {
             self.basket.clearTimer();
@@ -46,8 +48,9 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.clearBasket = function () {
-        self.basket.basket.removeAll();
+        self.basket.items.removeAll();
         self.basket.clearTimer();
+        self.basket.total(0);
     }
 
     self.basket.clearTimer = function () {
@@ -101,12 +104,6 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         }
     }
 
-    self.basket.cancel = function () {
-        History.pushState({ state: 4 }, "Basket", "?action=basket");
-
-        self.basket.notAgreedToTerms(false);
-    }
-
     self.basket.payment = {
         showThankYou: ko.observable(false),
         showFailure: ko.observable(false),
@@ -123,7 +120,8 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
             showError: ko.observable(false)
         },
         cancel: function () {
-            History.pushState({ state: 3 }, "Basket", "?action=basket");
+            self.basket.showPayment(false);
+            self.basket.notAgreedToTerms(false);
         },
         showFailureOrThankYou: function (reason) {
             self.basket.showPayment(false);
