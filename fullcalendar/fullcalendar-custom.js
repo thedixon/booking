@@ -167,15 +167,9 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             return activityListReturn;
         }, this);
        
-        this.showDayView = ko.observable(true);
-        this.showPoolView = ko.observable(false);
-        this.viewType = ko.observable("day");
-        this.displayType = ko.observable("events");
-
-        customCalendar.setupDateVM(this);
-
         customCalendar.setupUtilityFunctions(this, calendarScope);
-        
+        customCalendar.setupDateVM(this);
+        customCalendar.setupSignInVM(this);
 
         this.changePoolType = function (val) {
             var bookings = customCalendar.getEvents("swimmingBookings");
@@ -187,44 +181,10 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             self.timeTemplate(filteredBookings);
         };
 
-        
-
-        this.signIn = {
-            email: { 
-                value: ko.observable(''),
-                showError: ko.observable(false)
-            },
-            password: {
-                value: ko.observable(''),
-                showError: ko.observable(false)
-            },
-            wrongDetails: ko.observable(false),
-            goTo: function () {
-                $('#tabs li:eq(4) a').tab('show');
-                self.showDayView(false);
-                self.viewType("day");
-                $('#calenderHolder').hide();
-            },
-            doLogin: function () {
-                if (self.signIn.email.value() == "") {
-                    self.signIn.email.showError(true);
-                }
-
-                if (self.signIn.password.value() == "") {
-                    self.signIn.password.showError(true);
-                }
-            }
-        }
-
-        this.signIn.email.value.subscribe(function (val) {
-            self.signIn.email.showError(val != "");
-        });
-
-        this.signIn.password.value.subscribe(function (val) {
-            self.signIn.password.showError(val != "");
-        });
+        console.log(customCalendar.myBookingEvents);
 
         this.myBookings = {
+            items: customCalendar.myBookingEvents,
             sendToEmail: function (a,b) {
                 var btn = $(b.currentTarget);
 

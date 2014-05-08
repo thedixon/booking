@@ -47,19 +47,9 @@ sbs.fullCalendarCustom.prototype.loadTemplates = function (templatesLoaded) {
         return $.Deferred(function () {
             var self = this;
 
-            var templates = ['default', 'swimming', 'football', 'basketball', 'hockey', 'tennis'];
-            for (var i = 0; i < templates.length; i++) {
-                (function (index) {
-                    loadTemplateCollection(templates[i], function () {
-                        if (index + 1 == templates.length) {
-                            // TODO: Shouldn't have to put setTimeout here, but only sometimes this gets fired one template too early.
-                            setTimeout(function () {
-                                self.resolve();
-                            }, 500);
-                        }
-                    });
-                })(i)
-            }
+            loadTemplateCollection('all', function () {
+                self.resolve();
+            });
         });
     }
 
@@ -130,7 +120,12 @@ sbs.fullCalendarCustom.prototype.setupData = function (vm) {
     ]);
 }
 
-sbs.fullCalendarCustom.prototype.setupUtilityFunctions = function (vm, scope) { 
+sbs.fullCalendarCustom.prototype.setupUtilityFunctions = function (vm, scope) {
+    vm.showDayView = ko.observable(true);
+    vm.showPoolView = ko.observable(false);
+    vm.viewType = ko.observable("day");
+    vm.displayType = ko.observable("events");
+
     vm.getActivityName = function (event) {
         if (vm.venues()[event.venueId]) {
             return vm.venues()[event.venueId].name;
@@ -382,6 +377,43 @@ sbs.fullCalendarCustom.prototype.setupDateVM = function (vm) {
 
         return (!date.allDay ? hours + suffix : "All day");
     };
+}
+
+sbs.fullCalendarCustom.prototype.setupSignInVM = function (vm) {
+    vm.signIn = {
+        email: {
+            value: ko.observable(''),
+            showError: ko.observable(false)
+        },
+        password: {
+            value: ko.observable(''),
+            showError: ko.observable(false)
+        },
+        wrongDetails: ko.observable(false),
+        goTo: function () {
+            $('#tabs li:eq(4) a').tab('show');
+            vm.showDayView(false);
+            vm.viewType("day");
+            $('#calenderHolder').hide();
+        },
+        doLogin: function () {
+            if (vm.signIn.email.value() == "") {
+                vm.signIn.email.showError(true);
+            }
+
+            if (vm.signIn.password.value() == "") {
+                vm.signIn.password.showError(true);
+            }
+        }
+    }
+
+    vm.signIn.email.value.subscribe(function (val) {
+        vm.signIn.email.showError(val != "");
+    });
+
+    vm.signIn.password.value.subscribe(function (val) {
+        vm.signIn.password.showError(val != "");
+    });
 }
 
 sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {

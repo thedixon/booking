@@ -1,0 +1,36 @@
+﻿[
+	{
+		"title":"Classes and Facility bookings",
+		"bookings": [
+			{ 
+				"description": "Basketball - Facility booking",
+				"location": "Sports Hall - Hall 3",
+				"time": "1 hour",
+				"date": "17 April 2014 at 5 pm",
+				"attendees": "Max 10 attendees",
+				"imageLocation": "images/basketball.jpg"
+			},
+			{ 
+				"description": "Water yoga",
+				"location": "Aquatics center - Main pool",
+				"time": "1 hour",
+				"date": "17 April 2014 at 5 pm",
+				"attendees": "2 spots",
+				"imageLocation": "images/wateryoga.jpg"
+			}
+
+		]
+	},
+	{
+		"title":"Valid entry tickets",
+		"bookings": [
+			{ 
+				"description": "Aquatic Centre Entry Ticket",
+				"location": "Aquatic Centre",
+				"valid": "Valid to 30 September 2013",
+				"entry": "Single entry for 2 persons",
+				"imageLocation": "images/pool1.jpg"
+			}
+		]
+	}
+]

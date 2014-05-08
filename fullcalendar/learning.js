@@ -104,15 +104,9 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             return sport && sport.template ? sport.template + "Template" : "defaultTemplate";
         }
         
-
         this.showSwimmingDetails = function (event, override) {
             event.showDetails(!event.showDetails());
         }
-
-        this.viewType = ko.observable("day");
-        this.displayType = ko.observable("sportsNights");
-        this.showDayView = ko.observable(true);
-        this.showPoolView = ko.observable(false);
 
         this.activitiesFiltered = ko.computed(function () {
             return this.sportsEvents;
@@ -174,46 +168,12 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
         }
 
-        customCalendar.setupDateVM(this);
-
         customCalendar.setupUtilityFunctions(this, calendarScope);
-
-        this.signIn = {
-            email: { 
-                value: ko.observable(''),
-                showError: ko.observable(false)
-            },
-            password: {
-                value: ko.observable(''),
-                showError: ko.observable(false)
-            },
-            wrongDetails: ko.observable(false),
-            goTo: function () {
-                $('#tabs li:eq(4) a').tab('show');
-                self.showDayView(false);
-                self.viewType("day");
-                $('#calenderHolder').hide();
-            },
-            doLogin: function () {
-                if (self.signIn.email.value() == "") {
-                    self.signIn.email.showError(true);
-                }
-
-                if (self.signIn.password.value() == "") {
-                    self.signIn.password.showError(true);
-                }
-            }
-        }
-
-        this.signIn.email.value.subscribe(function (val) {
-            self.signIn.email.showError(val != "");
-        });
-
-        this.signIn.password.value.subscribe(function (val) {
-            self.signIn.password.showError(val != "");
-        });
+        customCalendar.setupDateVM(this);
+        customCalendar.setupSignInVM(this);
 
         this.myBookings = {
+            items: customCalendar.myBookingEvents,
             sendToEmail: function (a,b) {
                 var btn = $(b.currentTarget);
 

@@ -34,6 +34,10 @@
 
         $.getJSON(baseUrl + "sportsNights.json", function (data) {
             self.sportsNightsEvents = data;
-        })
+        }),
+
+         $.getJSON(baseUrl + "myBookings.json", function (data) {
+             self.myBookingEvents = data;
+         })
     ]);
 }
