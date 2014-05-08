@@ -28,12 +28,12 @@
             self.calendarActivities = data;
         }),
 
-        //$.get(baseUrl + "paidActivities.json", function (data) {
-        //    self.paidActivitiesEvents = JSON.parse(data);
-        //}),
+        $.getJSON(baseUrl + "paidActivities.json", function (data) {
+            self.paidActivitiesEvents = data;
+        }),
 
-        //$.get(baseUrl + "sportsNights.json", function (data) {
-        //    self.sportsNightsEvents = JSON.parse(data);
-        //})
+        $.getJSON(baseUrl + "sportsNights.json", function (data) {
+            self.sportsNightsEvents = data;
+        })
     ]);
 }

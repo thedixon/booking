@@ -27,8 +27,8 @@
     {
         "title": "Lunch",
         "displayTitle": "Lunch",
-        "start":"2014-05-09 08:00:00",
-	    "end":"2014-05-09 13:00:00",
+        "start":"2014-05-11 08:00:00",
+	    "end":"2014-05-11 13:00:00",
         "allDay": "false",
         "placesLeft": "10",
         "imageLocation": "",

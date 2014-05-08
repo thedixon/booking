@@ -39,8 +39,10 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
 
     self.basket.remove = function () {
         self.basket.total(self.basket.total() - this.price);
+
+        this.HasBeenBooked(false);
+
         self.basket.items.remove(this);
-        
 
         if (self.basket.items().length == 0) {
             self.basket.clearTimer();
@@ -48,6 +50,10 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.clearBasket = function () {
+        for (var i = 0; i < self.basket.items.length; i++) {
+            self.basket.items[i].HasBeenBooked(false);
+        }
+
         self.basket.items.removeAll();
         self.basket.clearTimer();
         self.basket.total(0);
@@ -63,6 +69,8 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     });
 
     self.basket.add = function (item) {
+        item.HasBeenBooked(true);
+
         self.basket.showTimer(true);
 
         self.basket.timerValue(new Date(0, 0, 0, 0, timerMinutes, 0, 0));
@@ -79,7 +87,8 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         self.basket.items.push({
             title: item.displayTitle,
             activityName: activity,
-            price: price
+            price: price,
+            HasBeenBooked: item.HasBeenBooked
         });
 
         self.basket.total(self.basket.total() + price);

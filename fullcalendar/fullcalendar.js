@@ -774,12 +774,12 @@
 
                     // Custom
                     if (position == "left") {
-                        e.append("<a href='#' class='previousCalendarMonth'><i class='glyphicon glyphicon-chevron-left'></i></a>");
+                        e.append("<div id='previousCalendarMonthContainer' style='display: none'><a href='#' class='previousCalendarMonth'><i class='glyphicon glyphicon-chevron-left'></i></a></div>");
                         return;
                     }
 
                     if (position == "right") {
-                        e.append("<a href='#' class='nextCalendarMonth'><i class='glyphicon glyphicon-chevron-right'></i></a>");
+                        e.append("<div id='nextCalendarMonthContainer'><a href='#' class='nextCalendarMonth'><i class='glyphicon glyphicon-chevron-right'></i></a></div>");
                         return;
                     }
 
@@ -5475,7 +5475,8 @@
                     'background-color': '#fcf8e3',
                     'border': '1px solid #faebcc',
                     'color': '#8a6d3b',
-                    'height': $('.fc-day').eq(0).height() - 2
+                    'height': $('.fc-day').eq(0).height() - 2,
+                    'opacity': '0.7'
                 });
             });
         }

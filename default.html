@@ -677,7 +677,7 @@
                                             <button class="btn btn-info more-info" data-bind="click: $root.showMoreInfo">More Info</button>
                                             <button class="btn btn-info" 
                                                 data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
-                                                           click: $root.basket.add, enable: $root.eventsCanBook">Book</button>
+                                                           enable: !HasBeenBooked() && $root.eventsCanBook(), click: $root.basket.add">Book</button>
                                         </div>
                                     </div>
                                 </div>
