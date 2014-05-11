@@ -202,6 +202,8 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
 
 $(function () {
+    $('#pleaseWaitDialog').modal('show');
+
     customCalendar = new sbs.fullCalendarCustom();
 
     customCalendar.loadData().then(function () {
@@ -211,7 +213,7 @@ $(function () {
             customCalendar.setupEvents();
 
             setTimeout(function () {
-                $('.loader').removeClass("active").hide();
+                $('#pleaseWaitDialog').modal('hide');
                 $('#main').show();
 
                 customCalendar.setupCalendar("events", "Event");

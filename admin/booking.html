@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href='./fullcalendar/fullcalendar.css' rel='stylesheet' />
-    <link href='./fullcalendar/fullcalendar-custom.css' rel='stylesheet' />
-    <link href='./fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
-    <link href='./css/ui-lightness/jquery-ui-1.10.4.custom.min.css' rel='stylesheet' />
+    <link href='../fullcalendar/fullcalendar.css' rel='stylesheet' />
+    <link href='../fullcalendar/fullcalendar-custom.css' rel='stylesheet' />
+    <link href='../fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link href='../css/ui-lightness/jquery-ui-1.10.4.custom.min.css' rel='stylesheet' />
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
-    <script src='./fullcalendar/jquery-1.10.2.js'></script>
-    <script src='./fullcalendar/jquery-ui-1.10.4.custom.min.js'></script>
-    <script src='./lib/jquery.cookie.js'></script>
+    <script src='../fullcalendar/jquery-1.10.2.js'></script>
+    <script src='../fullcalendar/jquery-ui-1.10.4.custom.min.js'></script>
+    <script src='../lib/jquery.cookie.js'></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script src='./lib/history.js'></script>
-    <script src='./lib/history.adapter.js'></script>
-    <script src='./lib/knockout-3.1.0.js'></script>
-    <script src='./lib/knockout.punches.js'></script>
-    <script src='./lib/underscore.js'></script>
-    <script src='./fullcalendar/fullcalendar.js'></script>
-    <script src='./js/custom-functions.js'></script>
-    <script src='./js/main.js'></script>
-    <script src='./js/shared.js'></script>
-    <script src='./js/basket.js'></script>
-    <script src='./js/loaddata.js'></script>
+    <script src='../lib/history.js'></script>
+    <script src='../lib/history.adapter.js'></script>
+    <script src='../lib/knockout-3.1.0.js'></script>
+    <script src='../lib/knockout.punches.js'></script>
+    <script src='../lib/underscore.js'></script>
+    <script src='../fullcalendar/fullcalendar.js'></script>
+    <script src='../js/custom-functions.js'></script>
+    <script src='../js/main.js'></script>
+    <script src='../js/shared.js'></script>
+    <script src='js/basket_admin.js'></script>
+    <script src='../js/loaddata.js'></script>
 
     <title></title>
 </head>
@@ -84,8 +84,19 @@
     <div id="main" style="display: none">
         <div class="navbar navbar-top bg-warning" role="navigation">
             <div class="container">
+                <h4 class="pull-left" style="padding-top: 5px">Admin Bookings</h4>
+
                 <ul class="nav navbar-nav pull-right">
-                    <li><a href="#" data-bind="click: signIn.goTo">Sign In</a></li>
+                    <li>
+                        <form class="form-horizontal" style="padding-top: 5px">
+                            <div class="form-group">
+                                <label class="col-md-6 control-label">Search for customer</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" data-bind="value: customerId" />
+                                </div>
+                            </div>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>

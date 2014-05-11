@@ -15,6 +15,17 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         notAgreedToTerms: ko.observable(false)
     }
 
+    // Populate basket items if the basket session cookie is set.
+    if ($.cookie("basket_session") != null) {
+        $('#pleaseWaitDialog').modal('show');
+
+        $.get("basket.php?action=get&basket_session=" + $.cookie("basket_session"), function (data) {
+            $('#pleaseWaitDialog').modal('hide');
+
+            self.basket.items(data);
+        });
+    }
+
     self.basket.extendTime = function () {
         self.basket.timerOnHold = false;
         self.basket.continuedToBasket = false;
@@ -38,18 +49,39 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.remove = function () {
-        self.basket.total(self.basket.total() - this.price);
+        $('#pleaseWaitDialog').modal('show');
 
-        this.HasBeenBooked(false);
+        $.post("basket.php", { action: "remove", "id": 1 }, function (data) {
+            $('#pleaseWaitDialog').modal('hide');
 
-        self.basket.items.remove(this);
+            if (!data.error) {
+                self.basket.total(self.basket.total() - this.price);
 
-        if (self.basket.items().length == 0) {
-            self.basket.clearTimer();
-        }
+                this.HasBeenBooked(false);
+
+                self.basket.items.remove(this);
+
+                if (self.basket.items().length == 0) {
+                    $.cookie("basket_session", null);
+
+                    self.basket.clearTimer();
+                }
+
+                $.cookie("basket_session", data.basketSessionId); // This should be a GUID, hackers could change 12345 to 12346 etc.
+            } else {
+                self.moreInfo({
+                    displayTitle: 'Error',
+                    longDescription: data.error
+                });
+
+                $('#moreInfoModal').modal('show');
+            }
+        });
     }
 
     self.basket.clearBasket = function () {
+        $.post("basket.php", { action: "removeAll", "basket_session": "12345" });
+
         for (var i = 0; i < self.basket.items.length; i++) {
             self.basket.items[i].HasBeenBooked(false);
         }
@@ -57,6 +89,8 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         self.basket.items.removeAll();
         self.basket.clearTimer();
         self.basket.total(0);
+
+        $.cookie("basket_session", null);
     }
 
     self.basket.clearTimer = function () {
@@ -69,36 +103,55 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     });
 
     self.basket.add = function (item) {
+        $('#pleaseWaitDialog').modal('show');
+
         item.HasBeenBooked(true);
 
-        self.basket.showTimer(true);
+        // First, add to basket on server
+        $.post("basket.php", { action: "add", "id": "1", "basket_session": + $.cookie("basket_session") || 0 }, function (data) {
+            $('#pleaseWaitDialog').modal('hide');
 
-        self.basket.timerValue(new Date(0, 0, 0, 0, timerMinutes, 0, 0));
-        var activity = ''
+            if (!data.error) {
+                self.basket.showTimer(true);
 
-        if (item.eventType == "swimming") {
-            item.price = 7.50; // Static for now.
-            item.displayTitle = "Book Lane"
-            activity = "Swimming"
-        }
+                self.basket.timerValue(new Date(0, 0, 0, 0, timerMinutes, 0, 0));
+                var activity = ''
 
-        var price = Number(item.price);
+                // This will ultimately be template-based
+                if (item.eventType == "swimming") {
+                    item.price = 7.50; // Static for now.
+                    item.displayTitle = "Book Lane"
+                    activity = "Swimming"
+                }
 
-        self.basket.items.push({
-            title: item.displayTitle,
-            activityName: activity,
-            price: price,
-            HasBeenBooked: item.HasBeenBooked
+                var price = Number(item.price);
+
+                self.basket.items.push({
+                    title: item.displayTitle,
+                    activityName: activity,
+                    price: price,
+                    HasBeenBooked: item.HasBeenBooked
+                });
+
+                self.basket.total(self.basket.total() + price);
+
+                if (self.basket.items().length == 1) {
+                    // Move to basket, if not then just leave them.
+                    self.basket.navigateTo();
+
+                    self.basket.continuedToBasket = false;
+                }
+
+                $.cookie("basket_session", data.basketSessionId); // This should be a GUID, hackers could change 12345 to 12346 etc.
+            } else {
+                self.moreInfo({
+                    displayTitle: 'Error',
+                    longDescription: data.error
+                });
+
+                $('#moreInfoModal').modal('show');
+            }
         });
-
-        self.basket.total(self.basket.total() + price);
-
-        if (self.basket.items().length == 1) {
-            // Move to basket, if not then just leave them.
-            self.basket.navigateTo();
-
-            self.basket.continuedToBasket = false;
-        }
     }
 
     self.basket.confirm = function () {

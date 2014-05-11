@@ -8,7 +8,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
     viewModel = function () {
         var self = this;
-
+        
         customCalendar.setupData(this);
 
         this.eventTypeId.subscribe(function () {
@@ -27,6 +27,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             }
         }, this);
 
+        this.customerId = ko.observable();
         this.currentSport = ko.observable();
         this.sportEventName = ko.observable();
         this.timeTemplate = ko.observableArray();
@@ -181,8 +182,6 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             self.timeTemplate(filteredBookings);
         };
 
-        console.log(customCalendar.myBookingEvents);
-
         this.myBookings = {
             items: customCalendar.myBookingEvents,
             sendToEmail: function (a,b) {
@@ -212,6 +211,8 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 }
 
 $(function () {
+    $('#pleaseWaitDialog').modal('show');
+
     customCalendar = new sbs.fullCalendarCustom();
 
     customCalendar.loadData().then(function () {
@@ -221,7 +222,7 @@ $(function () {
             customCalendar.setupEvents();
 
             setTimeout(function () {
-                $('.loader').removeClass("active").hide();
+                $('#pleaseWaitDialog').modal('hide');
                 $('#main').show();
 
                 customCalendar.setupCalendar("events", "Event", 0);

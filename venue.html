@@ -16,28 +16,31 @@
     <script src='./lib/knockout.punches.js'></script>
     <script src='./lib/underscore.js'></script>
     <script src='./fullcalendar/fullcalendar.js'></script>
-    <script src='./fullcalendar/custom-functions.js'></script>
-    <script src='./fullcalendar/venues.js'></script>
-    <script src='./fullcalendar/shared.js'></script>
-    <script src='./fullcalendar/basket.js'></script>
-    <script src='./fullcalendar/loaddata.js'></script>
+    <script src='./js/custom-functions.js'></script>
+    <script src='./js/venues.js'></script>
+    <script src='./js/shared.js'></script>
+    <script src='./js/basket.js'></script>
+    <script src='./js/loaddata.js'></script>
 
     <title></title>
 </head>
 
 <body>
-    <div class="loader active">
-        <div class="splash">
-            <div class="container text-center">
-                <div class="col-md-3 col-md-offset-4 col-xs-12">
-                    <h4>Loading</h4>
-                    <div class="progress progress-striped active">
-                        <div class="progress-bar" role="progressbar" style="width: 100%">
-                        </div>
-                    </div>
+    <div class="modal fade" id="pleaseWaitDialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h4>Loading</h4>
+          </div>
+          <div class="modal-body">
+            <div class="progress progress-striped active">
+                <div class="progress-bar" role="progressbar" style="width: 100%">
                 </div>
             </div>
-        </div>    </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="moreInfoModal">
       <div class="modal-dialog">
