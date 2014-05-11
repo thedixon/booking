@@ -1,7 +1,7 @@
 ﻿sbs.fullCalendarCustom.prototype.loadData = function () {
     var self = this;
 
-    var baseUrl = "/NewRepo/json/";
+    var baseUrl = "/json/";
 
     return $.whenAll([
         $.getJSON(baseUrl + "mainEvents.json", function (data) {

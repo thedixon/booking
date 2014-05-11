@@ -36,7 +36,7 @@ window.sbs = window.sbs || {};
 
 sbs.fullCalendarCustom.prototype.loadTemplates = function (templatesLoaded) {
     var loadTemplateCollection = function (file, success) {
-        $.get('/NewRepo/templates/' + file + '.html', function (templates) {
+        $.get('/templates/' + file + '.html', function (templates) {
             $('body').append('<div style="display:none">' + templates + '<\/div>');
             success();
         });
