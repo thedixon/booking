@@ -1,0 +1,23 @@
+﻿[
+    {
+        "start": "2014-05-07 08:00:00",
+        "lanesTaken": "4",
+        "poolId": "1"
+    },
+    {
+        "start": "2014-05-07 11:00:00",
+        "lanesTaken": "2",
+        "poolId": "1"
+    },
+    {
+        "start": "2014-05-07 13:00:00",
+        "lanesTaken": "1",
+        "bookingNotAllowed": "true",
+        "poolId": "2"
+    },
+    {
+        "start": "2014-05-07 14:00:00",
+        "lanesTaken": "12",
+        "poolId": "3"
+    }
+]

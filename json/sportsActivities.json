@@ -1,0 +1,52 @@
+﻿[
+    {
+        "title": "Short Activity 1",
+        "displayTitle": "Short Activity 1",
+        "start": "2014-05-07 10:00:00",
+        "end": "2014-05-07 11:00:00",
+        "allDay": "false",
+        "placesLeft": "10",
+        "imageLocation": "",
+        "shortDescription": "",
+		"longDescription": "",
+        "price": "10"
+    },
+    {
+        "title":"Short Activity 2",
+        "displayTitle": "Short Activity 2",
+        "start": "2014-05-10 08:00:00",
+        "end": "2014-05-10 09:00:00",
+        "allDay": false,
+        "sportId": 2,
+        "placesLeft": 10,
+        "imageLocation": "",
+        "shortDescription": "",
+		"longDescription": "",
+        "price": 10
+    },
+    {
+        "title": "Lunch",
+        "displayTitle": "Lunch",
+        "start": "2014-05-08 08:00:00",
+        "end": "2014-05-08 09:00:00",
+        "allDay": "false",
+        "placesLeft": "10",
+        "imageLocation": "",
+        "shortDescription": "",
+		"longDescription": "",
+        "price": "10"
+    },
+    {
+        "title": "Click for Google",
+        "displayTitle": "Click for Google",
+        "start": "2014-05-07 08:00:00",
+        "end": "2014-05-07 09:00:00",
+        "allDay": "false",
+        "url": "http://google.com/",
+        "placesLeft": "10",
+        "imageLocation": "",
+        "shortDescription": "",
+		"longDescription": "",
+        "price": "10"
+    }
+]

@@ -1,0 +1,20 @@
+﻿<script id="hockeyTemplate" type="text/html">
+    <div class="text-right">
+        <i class="glyphicon glyphicon-time"></i> {{ fullTime }}
+    </div>
+    <div class="bottom-buffer-line-dash">
+        <div class="row">
+            <div class="col-md-1">
+                {{ startHour }}
+            </div>
+            <div class="col-md-7">
+                {{ description }}
+            </div>
+            <div class="col-md-2 text-right">
+                <button class="btn btn-info" 
+                    data-bind="click: $root.basket.add,
+                               enable: !HasBeenBooked() && $root.eventsCanBook()">Book Pitch</button>
+            </div>
+        </div> 
+    </div> 
+</script>

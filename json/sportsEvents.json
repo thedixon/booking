@@ -1,0 +1,54 @@
+﻿[
+    {
+        "id": "1",
+        "name": "Swimming",
+        "startTime": "9",
+        "endTime": "20",
+        "template": "swimming",
+        "increment": "1",
+        "laneAmount": "20",
+        "price": "5.50",
+        "prefix": "Lane"
+    },
+    {
+        "id": "2",
+        "name": "Basketball",
+        "startTime": "9",
+        "endTime": "20",
+        "template": "basketball",
+        "increment": "1",
+        "price": "5.50",
+        "prefix": "Court",
+        "courts": "5"
+    },
+    {
+        "id": "3",
+        "name": "Football",
+        "startTime": "9",
+        "endTime": "20",
+        "template": "football",
+        "increment": "1",
+        "price": "7",
+        "courts": "5"
+    },
+    {
+        "id": "4",
+        "name": "Tennis",
+        "startTime": "9",
+        "endTime": "20",
+        "template": "tennis",
+        "increment": "1",
+        "price": "8",
+        "courts": "5"
+    },
+    {
+        "id": "5",
+        "name": "Hockey",
+        "startTime": "9",
+        "endTime": "20",
+        "template": "hockey",
+        "increment": "1",
+        "price": "5.50",
+        "courts": "5"
+    }
+]
