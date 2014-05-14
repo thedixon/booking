@@ -128,3 +128,70 @@ and (max-width : 480px) {
         display: none;
     }
 }
+
+/* Brand styles - Added by Joe 5/11/2014 */
+a {
+    color: #B4102D;
+}
+a:hover, a:focus {
+    color: #940c24;
+}
+.navbar a {
+    background: none;
+    color: #eda5b1;
+}
+.navbar-nav > li > a:hover, .navbar-nav > li > a:focus {
+    background: none;
+    color: #fff;
+}
+.bg-warning {
+    background: #b4102d;
+}
+.alert-warning {
+    background-color: #B4102D;
+    border-color: #B4102D;
+    color: #fff;
+}
+
+/* Calendar pop-up */
+
+.ui-widget-header {
+    background: #9d9d9d;
+    border: #9d9d9d;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    color: #B4102D;
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    background: #eedbde;
+    border: 1px solid #B4102D;
+    color: #B4102D;
+}
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background: #B4102D;
+    border: 1px solid #B4102D;
+    color: #fff;
+}
+
+/* Main Calendar */
+
+.fc-state-highlight {
+    background: #eedbde;
+}
+
+/* Buttons */
+
+.btn-info {
+    background-color: #a2c037;
+    border-color: #a2c037;
+    color: #fff;
+}
+.btn-info:hover, .btn-info:focus {
+    background-color: #88a12d;
+    border-color: #88a12d;
+    color: #fff;
+}
+.btn-info.disabled, .btn-info[disabled], fieldset[disabled] .btn-info, .btn-info.disabled:hover, .btn-info[disabled]:hover, fieldset[disabled] .btn-info:hover, .btn-info.disabled:focus, .btn-info[disabled]:focus, fieldset[disabled] .btn-info:focus, .btn-info.disabled:active, .btn-info[disabled]:active, fieldset[disabled] .btn-info:active, .btn-info.disabled.active, .btn-info.active[disabled], fieldset[disabled] .btn-info.active {
+    background-color: #c3d973;
+    border-color: #c3d973;
+}
