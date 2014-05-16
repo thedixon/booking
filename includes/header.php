@@ -63,7 +63,7 @@
                         <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/contact-us.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl00_lblChildTitle">Contact Us</span></a> </li>
                         <li class="nav-submenu-item"><a href="http://TBD"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl01_lblChildTitle">Sports Hub Tix</span></a> </li>
                         <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/faq.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl02_lblChildTitle">FAQ</span></a> </li>
-                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/our-program.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl03_lblChildTitle">Our Program</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/our-programme.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl03_lblChildTitle">Our programme</span></a> </li>
                     </ul>
                 </li>
                 <li class="nav-item">

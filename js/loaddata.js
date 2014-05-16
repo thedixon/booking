@@ -40,8 +40,8 @@
              self.myBookingEvents = data;
         }),
 
-        $.getJSON(baseUrl + "programEvents.json", function (data) {
-             self.programEvents = data;
+        $.getJSON(baseUrl + "programmeEvents.json", function (data) {
+             self.programmeEvents = data;
         })
     ]);
 }

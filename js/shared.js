@@ -119,7 +119,7 @@ sbs.fullCalendarCustom.prototype.setupData = function (vm) {
         { name: 'Diving', id: 3 }
     ]);
 
-    vm.programId = ko.observable(querystring('programId') ? querystring('programId') : 0);
+    vm.programmeId = ko.observable(querystring('programmeId') ? querystring('programmeId') : 0);
 }
 
 sbs.fullCalendarCustom.prototype.setupUtilityFunctions = function (vm, scope) {
@@ -239,9 +239,10 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter, filt
                 return booking.sportId == filter;
             });
             break;
-        case "programs":
-            return _.filter(this.programEvents, function (event) {
-                return event.programId == filter;
+        case "programmes":
+            return _.filter(this.programmeEvents, function (event) {
+                return event.programmeId == filter &&
+                       (filter2 ? new Date(event.start).getDay() == filter2 : true);
             });
 
             break;
@@ -478,7 +479,7 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
         var displayType = this.displayType();
         var theDate = this.date();
         var activityId = this.activityId();
-        var programId = this.programId();
+        var programmeId = this.programmeId();
         var venueId = this.venueId();
         var eventTypeId = this.eventTypeId();
         var filteredEvents;
@@ -527,8 +528,8 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                 });
 
                 break;
-            case "programs":
-                var events = scope.getEvents(displayType, programId);
+            case "programmes":
+                var events = scope.getEvents(displayType, programmeId, globalVM.SelectedDay());
 
                 filteredEvents = _.filter(events, function (event) {
                     event.HasBeenBooked = ko.observable(false);
@@ -551,7 +552,7 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
 
         // Group the filtered events by time.
         var groupedEvents
-        if (displayType == "programs") {
+        if (displayType == "programmes") {
             groupEvents = _.groupBy(filteredEvents, function (event) {
                 var thisDate = new Date(event.start);
                 return thisDate.getDate() + "_" + thisDate.getMonth() + "_" + thisDate.getYear();
@@ -573,14 +574,10 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
 
             }
 
-            console.log(groupEvents);
-
             groupEvents = _.groupBy(groupEvents, function (event) {
                 var thisDate = new Date(event.start);
                 return thisDate.getHours();
             });
-
-            console.log(groupEvents);
 
             return groupEvents;
         } else {
@@ -600,24 +597,21 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                     return this.fullDisplay.slice(0, filterLimit);
                 }, groupedEvent);
             }
+
+            var makeArray = _.toArray(groupedEvents);
+
+            switch (displayType) {
+                case "events":
+                    cachedEvents[theDate + "_" + eventTypeId] = makeArray;
+
+                    break;
+                case "activities":
+                    cachedActivities[theDate + "_" + venueId + "_" + activityId] = makeArray;
+                    break;
+            }
+
+            return makeArray;
         }
-
-        
-        
-
-        var makeArray = _.toArray(groupedEvents);
-
-        switch (displayType) {
-            case "events":
-                cachedEvents[theDate + "_" + eventTypeId] = makeArray;
-
-                break;
-            case "activities":
-                cachedActivities[theDate + "_" + venueId + "_" + activityId] = makeArray;
-                break;
-        }
-
-        return makeArray;
     }, vm);
 
     vm.moreInfo = ko.observable();
@@ -746,13 +740,13 @@ function changeDisplayType(displayType, ignoreCalendar) {
                 calendar.fullCalendar('addEventSource', currentEventSource);
             }
             break;
-        case "programs":
+        case "programmes":
             if (!globalVM.isMonthView()) {
                 globalVM.showPoolView(false);
                 globalVM.showDayView(true);
             }
 
-            currentEventSource = customCalendar.groupType(customCalendar.getEvents("programs", globalVM.programId()), "Event");
+            currentEventSource = customCalendar.groupType(customCalendar.getEvents("programmes", globalVM.programmeId(), globalVM.SelectedDay()), "Event");
 
             if (!ignoreCalendar) {
                 calendar.fullCalendar('addEventSource', currentEventSource);

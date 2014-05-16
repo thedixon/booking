@@ -47,8 +47,8 @@
                         <div class="alert alert-warning">
                             <div class="row">
                                 <div class="col-md-2 text-left">
-                                    <strong>Date</strong>
-                                    <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
+                                    <strong>Select Day of Week</strong>
+                                    <select class="form-control" data-bind="options: SelectableDays, value: SelectedDay, optionsText: 'text', optionsValue: 'value', enable: viewType() == 'day'"></select>
                                 </div>
                                 <div class="col-md-2 col-md-offset-8 text-left">
                                     <strong>View</strong><br />
@@ -446,7 +446,7 @@
 
             <div data-bind="if: showDayView">
                 <div id="dayView" class="text-left top-buffer-large">
-                    <div class="panel panel-default" data-bind="visible: activitiesInDay().length == 0 && !showPoolView()">
+                    <div class="panel panel-default" data-bind="visible: ((!activitiesInDay() || activitiesInDay().length == 0) || (!activitiesInDay().NaN || activitiesInDay().NaN.length == 0)) && !showPoolView()">
                         <div class="panel-body">
                             <div class="text-center">
                                 <h4>No events available</h4>

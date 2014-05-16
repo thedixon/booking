@@ -172,15 +172,18 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
         customCalendar.setupDateVM(this);
         customCalendar.setupSignInVM(this);
 
-        this.changePoolType = function (val) {
-            var bookings = customCalendar.getEvents("swimmingBookings");
+        this.SelectableDays = [
+            { text: "All", value: 0 },
+            { text: "Monday", value: 1 },
+            { text: "Tuesday", value: 2 },
+            { text: "Wednesday", value: 3 },
+            { text: "Thursday", value: 4 },
+            { text: "Friday", value: 5 },
+            { text: "Saturday", value: 6 },
+            { text: "Sunday", value: 7 }
+        ];
 
-            var filteredBookings = _.filter(bookings, function (booking) {
-                return booking.poolId == val;
-            });
-
-            self.timeTemplate(filteredBookings);
-        };
+        this.SelectedDay = ko.observable(0);
 
         this.myBookings = {
             items: customCalendar.myBookingEvents,
@@ -225,9 +228,9 @@ $(function () {
                 $('#pleaseWaitDialog').modal('hide');
                 $('#main').show();
 
-                customCalendar.setupCalendar("programs", "Event", 0);
+                customCalendar.setupCalendar("programmes", "Event", 0);
 
-                customCalendar.setupRouting("programs", "Program", 0);
+                customCalendar.setupRouting("programmes", "Programme", 0);
             }, 2000);
         });
     });
