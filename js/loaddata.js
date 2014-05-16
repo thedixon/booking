@@ -42,6 +42,10 @@
 
         $.getJSON(baseUrl + "programmeEvents.json", function (data) {
              self.programmeEvents = data;
+        }),
+
+        $.getJSON(baseUrl + "schoolEvents.json", function (data) {
+            self.schoolEvents = data;
         })
     ]);
-}
+};

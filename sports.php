@@ -17,7 +17,7 @@
     <script src='./lib/underscore.js'></script>
     <script src='./fullcalendar/fullcalendar.js'></script>
     <script src='./js/custom-functions.js'></script>
-    <script src='./js/learning.js'></script>
+    <script src='./js/sports.js'></script>
     <script src='./js/shared.js'></script>
     <script src='./js/basket.js'></script>
     <script src='./js/loaddata.js'></script>
@@ -34,20 +34,44 @@
         <div id="venueContainer" class="container">
             <div id="tabs">
                 <ul class="nav nav-tabs">
-                    <li class="active" data-displaytype="schools">
-                        <a href="#schools" data-toggle="tab" data-displaytype="schools" data-state="0" data-title="Schools">Schools</a>
+                    <li class="active" data-displaytype="sportsNights">
+                        <a href="#sportsNights" data-toggle="tab" data-displaytype="sportsNights" data-state="0" data-title="Sports Nights">Sports nights</a>
+                    </li>
+                    <li data-displaytype="paidActivities">
+                        <a href="#paidActivities" data-toggle="tab" data-displaytype="paidActivities" data-state="1" data-title="Paid Activities">Paid activities</a>
                     </li>
                     <li class="pull-right" data-displaytype="basket"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
                         <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
                     </li>
                 </ul>
                 <div class="tab-content top-buffer-large">
-                    <div class="tab-pane active" id="schools">
+                    <div class="tab-pane active" id="sportsNights">
                         <div class="alert alert-warning">
                             <div class="row">
                                 <div class="col-md-4 text-left">
-                                    <strong>Select age</strong>
-                                    <select data-bind="options: ageRanges, optionsText: 'name', optionsValue: 'value', value: ageRange" class="form-control"></select>
+                                    <strong>Select sport</strong>
+                                    <select id="sportSelect" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
+                                </div>
+                                <div class="col-md-2 col-md-offset-4 text-left">
+                                    <strong>Date</strong>
+                                    <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
+                                </div>
+                                <div class="col-md-2 text-left">
+                                    <strong>View</strong><br />
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
+                                        <button type="button" class="btn btn-default" data-view="month" data-bind="click: toggleView, css: { 'active': viewType() == 'month' }">Month</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="paidActivities">
+                        <div class="alert alert-warning">
+                            <div class="row">
+                                <div class="col-md-4 text-left">
+                                    <strong>Select sport</strong>
+                                    <select id="Select1" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
                                 </div>
                                 <div class="col-md-2 col-md-offset-4 text-left">
                                     <strong>Date</strong>

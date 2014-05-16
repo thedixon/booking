@@ -35,15 +35,15 @@
         <div class="container">
             <div id="tabs">
                 <ul class="nav nav-tabs">
-                    <li class="active" data-displaytype="programs">
-                        <a href="#programs" data-toggle="tab" data-displaytype="programs" data-state="0" data-title="Programs">Programs</a>
+                    <li class="active" data-displaytype="programmes">
+                        <a href="#programmes" data-toggle="tab" data-displaytype="programmes" data-state="0" data-title="Programmes">Programmes</a>
                     </li>
                     <li style="display: none" data-displaytype="myBookings">
                         <a href="#myBookings" data-displaytype="myBookings" data-state="6" data-title="My Bookings">My Bookings</a>
                     </li>
                 </ul>
                 <div class="tab-content top-buffer-large">
-                    <div class="tab-pane active" id="programs">
+                    <div class="tab-pane active" id="programmes">
                         <div class="alert alert-warning">
                             <div class="row">
                                 <div class="col-md-2 text-left">
@@ -446,7 +446,7 @@
 
             <div data-bind="if: showDayView">
                 <div id="dayView" class="text-left top-buffer-large">
-                    <div class="panel panel-default" data-bind="visible: ((!activitiesInDay() || activitiesInDay().length == 0) || (!activitiesInDay().NaN || activitiesInDay().NaN.length == 0)) && !showPoolView()">
+                    <div class="panel panel-default" data-bind="visible: ((!activitiesInDay() || activitiesInDay().length == 0) || (!activitiesInDay()[0].NaN || activitiesInDay()[0].NaN.length == 0)) && !showPoolView()">
                         <div class="panel-body">
                             <div class="text-center">
                                 <h4>No events available</h4>

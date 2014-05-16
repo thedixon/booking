@@ -28,61 +28,15 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
         customCalendar.setupData(this);
 
-        this.sportsEvents = [
-        {
-            id: 2,
-            name: "Basketball",
-            startTime: 9,
-            endTime: 20,
-            template: "basketball",
-            increment: 1,
-            price: 5.50,
-            prefix: "Court",
-            courts: 5
-        },
-        {
-            id: 3,
-            name: "Football",
-            startTime: 9,
-            endTime: 20,
-            template: "football",
-            increment: 1,
-            price: 7,
-            courts: 5
-        },
-        {
-            id: 4,
-            name: "Tennis",
-            startTime: 9,
-            endTime: 20,
-            template: "tennis",
-            increment: 1,
-            price: 8,
-            courts: 5
-        },
-        {
-            id: 5,
-            name: "Hockey",
-            startTime: 9,
-            endTime: 20,
-            template: "hockey",
-            increment: 1,
-            price: 5.50,
-            courts: 5
-        }
-        ]
+        this.ageRanges = ko.observableArray([
+            { name: "All", value: "0" },
+            { name: "1 - 10", value: "1-10" },
+            { name: "10 - 20", value: "10-20" },
+            { name: "20 - 30", value: "20-30" },
+            { name: "30+", value: "30" }
+        ]);
 
-        this.venueId.subscribe(function (val) {
-            if (calendar) {
-                changeDisplayType(this.displayType());
-            }
-        }, this);
-
-        this.activityId.subscribe(function () {
-            if (calendar) {
-                changeDisplayType(this.displayType());
-            }
-        }, this);
+        this.ageRange = ko.observable("0");
 
         this.currentSport = ko.observable();
         this.sportEventName = ko.observable();
@@ -216,9 +170,9 @@ $(function () {
                 $('#pleaseWaitDialog').modal('hide');
                 $('#main').show();
 
-                customCalendar.setupCalendar("events", "Event");
+                customCalendar.setupCalendar("schools", "Event");
 
-                customCalendar.setupRouting("sportsNights", "Sports Nights", 0);
+                customCalendar.setupRouting("schools", "Schools", 0);
             }, 2000);
         });
     });

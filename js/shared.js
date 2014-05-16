@@ -229,6 +229,29 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter, filt
             });
 
             break;
+        case "schools":
+            if (!filter || filter == 0) {
+                return this.schoolEvents;
+            }
+
+            var minAge;
+            var maxAge;
+
+            var filterSplit = filter.split("-");
+            if (filterSplit.length > 1) {
+                minAge = parseInt(filterSplit[0]);
+                maxAge = parseInt(filterSplit[1]);
+            } else {
+                minAge = parseInt(filter);
+                console.log(minAge);
+                maxAge = 120;
+            }
+
+            return _.filter(this.schoolEvents, function (event) {
+                return event.minAge >= minAge && event.maxAge <= maxAge;
+            });
+
+            break;
         case "sportsNights":
             return _.filter(this.sportsNightsEvents, function (booking) {
                 return booking.sportId == filter;
@@ -483,6 +506,7 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
         var venueId = this.venueId();
         var eventTypeId = this.eventTypeId();
         var filteredEvents;
+        var viewType = this.viewType();
 
         // Filter events by current date
         switch (displayType) {
@@ -530,15 +554,15 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                 break;
             case "programmes":
                 var events = scope.getEvents(displayType, programmeId, globalVM.SelectedDay());
-
+                
                 filteredEvents = _.filter(events, function (event) {
                     event.HasBeenBooked = ko.observable(false);
 
                     return true;
                 });
-
                 break;
-            case "sportsNights": case "paidActivities":
+            case "sportsNights":
+            case "paidActivities":
                 var events = scope.getEvents(displayType, activityId, venueId);
 
                 filteredEvents = _.filter(events, function (event) {
@@ -548,10 +572,20 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                 });
 
                 break;
+            case "schools":
+                var events = scope.getEvents(displayType, globalVM.ageRange());
+
+                filteredEvents = _.filter(events, function (event) {
+                    event.HasBeenBooked = ko.observable(false);
+
+                    return new Date(event.start).toDateString() == theDate.toDateString();
+                });
+
+                break;
         }
 
         // Group the filtered events by time.
-        var groupedEvents
+        var groupedEvents;
         if (displayType == "programmes") {
             groupEvents = _.groupBy(filteredEvents, function (event) {
                 var thisDate = new Date(event.start);
@@ -578,16 +612,18 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                 var thisDate = new Date(event.start);
                 return thisDate.getHours();
             });
-
-            return groupEvents;
+            return [groupEvents];
         } else {
             groupEvents = _.groupBy(filteredEvents, function (event) {
                 var thisDate = new Date(event.start);
                 return thisDate.getHours();
             });
 
-            for (key in groupedEvents) {
-                var groupedEvent = groupedEvents[key];
+            var groupArray = _.toArray(groupEvents);
+
+            for (var i = 0; i < groupArray.length; i++) {
+
+                var groupedEvent = groupArray[i];
 
                 groupedEvent.fullDisplay = groupedEvent;
                 groupedEvent.showAll = ko.observable(false);
@@ -596,21 +632,20 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                     if (this.showAll()) { return this.fullDisplay; }
                     return this.fullDisplay.slice(0, filterLimit);
                 }, groupedEvent);
-            }
 
-            var makeArray = _.toArray(groupedEvents);
+            }
 
             switch (displayType) {
                 case "events":
-                    cachedEvents[theDate + "_" + eventTypeId] = makeArray;
+                    cachedEvents[theDate + "_" + eventTypeId] = groupArray;
 
                     break;
                 case "activities":
-                    cachedActivities[theDate + "_" + venueId + "_" + activityId] = makeArray;
+                    cachedActivities[theDate + "_" + venueId + "_" + activityId] = groupArray;
                     break;
             }
 
-            return makeArray;
+            return groupArray;
         }
     }, vm);
 
@@ -640,8 +675,11 @@ sbs.fullCalendarCustom.prototype.setupCalendar = function (displayType, displayT
             globalVM.showDayView(true);
             globalVM.date(calEvent.start);
 
-            $('#dayView').scrollView();
+            if (globalVM.SelectedDay) {
+                globalVM.SelectedDay(calEvent.start.getDay());
+            }
 
+            $('#dayView').scrollView();
         },
         firstDay: 1,
         editable: true,
@@ -747,6 +785,18 @@ function changeDisplayType(displayType, ignoreCalendar) {
             }
 
             currentEventSource = customCalendar.groupType(customCalendar.getEvents("programmes", globalVM.programmeId(), globalVM.SelectedDay()), "Event");
+
+            if (!ignoreCalendar) {
+                calendar.fullCalendar('addEventSource', currentEventSource);
+            }
+            break;
+        case "schools":
+            if (!globalVM.isMonthView()) {
+                globalVM.showPoolView(false);
+                globalVM.showDayView(true);
+            }
+
+            currentEventSource = customCalendar.groupType(customCalendar.getEvents("schools", globalVM.ageRange()), "Event");
 
             if (!ignoreCalendar) {
                 calendar.fullCalendar('addEventSource', currentEventSource);
