@@ -15,16 +15,9 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         notAgreedToTerms: ko.observable(false)
     }
 
-    // Populate basket items if the basket session cookie is set.
-    //if ($.cookie("basket_session") != null) {
-    //    $('#pleaseWaitDialog').modal('show');
-
-    //    $.getJSON("api/basket.php?action=get&basket_session=" + $.cookie("basket_session"), function (data) {
-    //        $('#pleaseWaitDialog').modal('hide');
-
-    //        self.basket.items(data);
-    //    });
-    //}
+    self.basket.cancel = function () {
+        self.basket.removeAll();
+    };
 
     self.basket.extendTime = function () {
         self.basket.timerOnHold = false;

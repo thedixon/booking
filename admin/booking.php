@@ -27,12 +27,10 @@
 </head>
 
 <body>
-    <?php include('/includes/header.php'); ?>
-
-    <?php include('/includes/modals.php'); ?>
+    <?php include('../includes/modals.php'); ?>
     
-    <div id="main" style="display: none">
-        <div class="navbar navbar-top bg-warning" role="navigation">
+    <div id="main" style="display: none; padding-top: 0px">
+        <div class="navbar navbar-top bg-warning navbar-admin" role="navigation">
             <div class="container">
                 <h4 class="pull-left" style="padding-top: 5px">Admin Bookings</h4>
 
@@ -158,7 +156,7 @@
                                                 <div class="col-md-9">
                                                     <strong>Item {{ $index() + 1 }}</strong>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-3 text-right">
                                                     <button class="btn btn-info btn-sm" data-bind="click: $root.basket.remove">Remove</button>
                                                 </div>
                                             </div>
@@ -187,7 +185,15 @@
                                     </div>
 
                                     <div class="top-buffer-large">
-                                        If you only want to book this activity, agree to the terms and confirm your booking.
+                                        <div class="row">
+                                            <div class="col-md-4"><h4>Payment Type</h3></div>
+                                            <div class="col-md-8 text-right">
+                                                <select id="paymentOptions" class="form-control">
+                                                    <option value="CreditCard">Credit Card</option>
+                                                    <option value="NETS">NETS</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="row top-buffer-large">
@@ -215,7 +221,7 @@
 
                                         <div class="row top-buffer-large">
                                             <div class="col-md-2">
-                                                Code
+                                                <h4>Code</h4>
                                             </div>
                                             <div class="col-md-5">
                                                 <input class="form-control" type="text" />
@@ -496,11 +502,7 @@
             </div>
         </div>
 
-        <div class="navbar navbar-fixed-bottom" data-bind="visible: basket.showTimer">
-            <div class="text-center" >
-                <h4>Time left to book: <span data-bind="timer: basket.timerValue"></span></h4>
-            </div>
-        </div>
+        
 
         <div class="container bottom-buffer-large">
             <div id="calenderHolder">
@@ -607,8 +609,12 @@
                 </div>
             </div>
         </div>
+        
+        <div class="navbar navbar-fixed-bottom" data-bind="visible: basket.showTimer" style="margin-bottom: 0px">
+            <div class="text-center" >
+                <h4>Time left to book: <span data-bind="timer: basket.timerValue"></span></h4>
+            </div>
+        </div>
     </div>
-    
-    <?php include('/includes/footer.php'); ?>
 </body>
 </html>

@@ -1,5 +1,20 @@
+* {
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+}
 body {
     font-family: "National";
+}
+
+#main {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto;
+    padding-bottom: 70px;
 }
 
 #venueContainer {
@@ -74,8 +89,11 @@ body {
     border-color: #bce8f1;
     color: #31708f;
     padding: 0px !important;
-    margin-bottom: 20px;
     border-radius: 0px !important;
+}
+
+.navbar-admin {
+    color: #FFF !important;
 }
 
 .navbar-inverse {

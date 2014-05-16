@@ -239,11 +239,7 @@
             </div>
         </div>
 
-        <div class="navbar navbar-fixed-bottom" data-bind="visible: basket.showTimer">
-            <div class="text-center" >
-                <h4>Time left to book: <span data-bind="timer: basket.timerValue"></span></h4>
-            </div>
-        </div>
+        
 
         <div class="container bottom-buffer-large">
             <div id="calenderHolder">
@@ -348,6 +344,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <div class="navbar navbar-fixed-bottom" data-bind="visible: basket.showTimer">
+            <div class="text-center" >
+                <h4>Time left to book: <span data-bind="timer: basket.timerValue"></span></h4>
             </div>
         </div>
     </div>
