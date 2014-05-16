@@ -17,7 +17,7 @@
     <script src='./lib/underscore.js'></script>
     <script src='./fullcalendar/fullcalendar.js'></script>
     <script src='./js/custom-functions.js'></script>
-    <script src='./js/learning.js'></script>
+    <script src='./js/venues.js'></script>
     <script src='./js/shared.js'></script>
     <script src='./js/basket.js'></script>
     <script src='./js/loaddata.js'></script>
@@ -26,71 +26,38 @@
 </head>
 
 <body>
-    <div class="modal fade" id="pleaseWaitDialog" data-backdrop="static"
-         data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4>{{ pleaseWaitText }}</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="progress progress-striped active">
-                        <div class="progress-bar" role="progressbar" style="width: 100%">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php include('/includes/header.php'); ?>
+
+    <?php include('/includes/modals.php'); ?>
 
     <div id="main" style="display: none">
         <div id="venueContainer" class="container">
             <div id="tabs">
                 <ul class="nav nav-tabs">
-                    <li class="active" data-displaytype="sportsNights">
-                        <a href="#sportsNights" data-toggle="tab" data-displaytype="sportsNights" data-state="0" data-title="Sports Nights">Sports nights</a>
-                    </li>
-                    <li data-displaytype="paidActivities">
-                        <a href="#paidActivities" data-toggle="tab" data-displaytype="paidActivities" data-state="1" data-title="Paid Activities">Paid activities</a>
+                    <li class="active" data-displaytype="venue">
+                        <a href="#venue" data-toggle="tab" data-displaytype="venue" data-state="0" data-title="venue">Venue</a>
                     </li>
                     <li class="pull-right" data-displaytype="basket"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
                         <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
                     </li>
                 </ul>
                 <div class="tab-content top-buffer-large">
-                    <div class="tab-pane active" id="sportsNights">
+                    <div class="tab-pane active" id="venue">
                         <div class="alert alert-warning">
                             <div class="row">
                                 <div class="col-md-4 text-left">
-                                    <strong>Select sport</strong>
+                                    <strong>Activity Type</strong>
+                                    <select data-bind="options: venues, optionsText: 'name', optionsValue: 'id', value: venueId" class="form-control"></select>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <strong>Sport</strong>
                                     <select id="sportSelect" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
                                 </div>
-                                <div class="col-md-2 col-md-offset-4 text-left">
+                                <div class="col-md-2 text-left">
                                     <strong>Date</strong>
                                     <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
                                 </div>
-                                <div class="col-md-2 text-left">
-                                    <strong>View</strong><br />
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
-                                        <button type="button" class="btn btn-default" data-view="month" data-bind="click: toggleView, css: { 'active': viewType() == 'month' }">Month</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="paidActivities">
-                        <div class="alert alert-warning">
-                            <div class="row">
-                                <div class="col-md-4 text-left">
-                                    <strong>Select sport</strong>
-                                    <select id="Select1" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
-                                </div>
-                                <div class="col-md-2 col-md-offset-4 text-left">
-                                    <strong>Date</strong>
-                                    <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
-                                </div>
-                                <div class="col-md-2 text-left">
+                                <div class="col-md-2 text-left" data-bind="if: venueId() == 1">
                                     <strong>View</strong><br />
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
@@ -547,7 +514,7 @@
                     <div class="col-md-4" data-bind="visible: !isMonthView()">
                         <div class="center-block">
                             <h3>
-                                <a href="#" data-bind="click: goToPreviousDay"><i class="glyphicon glyphicon-chevron-left"></i>  {{ previousDay }}</a> 
+                                <a href="#" data-bind="click: goToPreviousDay, if: previousDay().length > 0"><i class="glyphicon glyphicon-chevron-left"></i>  {{ previousDay }}</a> 
                                 &#160 &#160 &#160 &#160  
                                 <a href="#" data-bind="click: goToNextDay, visible: nextDay().length > 0">{{ nextDay }} <i class="glyphicon glyphicon-chevron-right"></i></a>
                             </h3>
@@ -582,6 +549,7 @@
 
                                             <h4>{{ displayTitle }}</h4>
 
+                                            <!-- ko if: $root.displayType() == 'activities' || $root.displayType() == 'venue' -->
                                             <div class="row">
                                                 <div class="col-md-2">
                                                     <i class="glyphicon glyphicon-map-marker"></i> {{ $root.getActivityName(start) }}
@@ -591,11 +559,22 @@
                                                     <i class="glyphicon glyphicon-user"></i> {{ placesLeft }} Available Slots
                                                 </div>
                                             </div>
+                                            <!-- /ko -->
+
+                                            <!-- ko if: $root.displayType() == 'events' -->
+                                            <div class="row">
+                                                <div class="pull-left">
+                                                    {{ description }}
+                                                </div>
+                                            </div>
+                                            <!-- /ko -->
                                         </div>
 
                                         <div class="col-md-3 text-right">
+                                            <button class="btn btn-info more-info" data-bind="$root.showMoreInfo">More Info</button>
                                             <button class="btn btn-info" 
-                                                data-bind="click: $root.basket.add, enable: $root.eventsCanBook">Book (free)</button>
+                                                data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
+                                                           click: $root.basket.add, enable: $root.eventsCanBook">Book</button>
                                         </div>
                                     </div>
                                 </div>
@@ -623,5 +602,7 @@
             </div>
         </div>
     </div>
+    
+    <?php include('/includes/footer.php'); ?>
 </body>
 </html>

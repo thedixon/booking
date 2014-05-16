@@ -19,7 +19,7 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     //if ($.cookie("basket_session") != null) {
     //    $('#pleaseWaitDialog').modal('show');
 
-    //    $.getJSON("basket.php?action=get&basket_session=" + $.cookie("basket_session"), function (data) {
+    //    $.getJSON("api/basket.php?action=get&basket_session=" + $.cookie("basket_session"), function (data) {
     //        $('#pleaseWaitDialog').modal('hide');
 
     //        self.basket.items(data);
@@ -53,7 +53,7 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         var data = {
             error: false
         }
-        //$.post("basket.php", { action: "remove", "id": 1 }, function (data) {
+        //$.post("api/basket.php", { action: "remove", "id": 1 }, function (data) {
             $('#pleaseWaitDialog').modal('hide');
 
             if (!data.error) {
@@ -82,7 +82,7 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     self.basket.clearBasket = function () {
-        //$.post("basket.php", { action: "removeAll", "basket_session": "12345" });
+        //$.post("api/basket.php", { action: "removeAll", "basket_session": "12345" });
 
         for (var i = 0; i < self.basket.items.length; i++) {
             self.basket.items[i].HasBeenBooked(false);
@@ -112,7 +112,7 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
             error: false
         }
         // First, add to basket on server
-        //$.post("basket.php", { action: "add", "id": "1", "basket_session": + $.cookie("basket_session") || 0 }, function (data) {
+        //$.post("api/basket.php", { action: "add", "id": "1", "basket_session": + $.cookie("basket_session") || 0 }, function (data) {
             $('#pleaseWaitDialog').modal('hide');
 
             if (!data.error) {

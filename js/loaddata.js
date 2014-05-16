@@ -36,8 +36,12 @@
             self.sportsNightsEvents = data;
         }),
 
-         $.getJSON(baseUrl + "myBookings.json", function (data) {
+        $.getJSON(baseUrl + "myBookings.json", function (data) {
              self.myBookingEvents = data;
-         })
+        }),
+
+        $.getJSON(baseUrl + "programEvents.json", function (data) {
+             self.programEvents = data;
+        })
     ]);
 }

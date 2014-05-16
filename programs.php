@@ -9,6 +9,7 @@
 
     <script src='./lib/jquery.min.js'></script>
     <script src='./lib/jquery-ui.custom.min.js'></script>
+    <script src='./lib/jquery.cookie.js'></script>
     <script src="./lib/bootstrap.js"></script>
     <script src='./lib/history.js'></script>
     <script src='./lib/history.adapter.js'></script>
@@ -17,7 +18,7 @@
     <script src='./lib/underscore.js'></script>
     <script src='./fullcalendar/fullcalendar.js'></script>
     <script src='./js/custom-functions.js'></script>
-    <script src='./js/venues.js'></script>
+    <script src='./js/programs.js'></script>
     <script src='./js/shared.js'></script>
     <script src='./js/basket.js'></script>
     <script src='./js/loaddata.js'></script>
@@ -26,71 +27,30 @@
 </head>
 
 <body>
-    <div class="modal fade" id="pleaseWaitDialog" data-backdrop="static"
-         data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4>{{ pleaseWaitText }}</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="progress progress-striped active">
-                        <div class="progress-bar" role="progressbar" style="width: 100%">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php include('/includes/header.php'); ?>
 
-    <div class="modal fade" id="moreInfoModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-              <div class="row" data-bind="with: moreInfo">
-                  <div class="col-md-3">
-                      <img data-bind="attr: { src: imageLocation }" class="img-responsive img-rounded" />
-                  </div>
-                  <div class="col-md-9">
-                      {{ longDescription }}
-                  </div>
-              </div>
-          </div>
-          <div class="modal-footer">
-             <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <?php include('/includes/modals.php'); ?>
 
     <div id="main" style="display: none">
-        <div id="venueContainer" class="container">
+        <div class="container">
             <div id="tabs">
                 <ul class="nav nav-tabs">
-                    <li class="active" data-displaytype="venue">
-                        <a href="#venue" data-toggle="tab" data-displaytype="venue" data-state="0" data-title="venue">Venue</a>
+                    <li class="active" data-displaytype="programs">
+                        <a href="#programs" data-toggle="tab" data-displaytype="programs" data-state="0" data-title="Programs">Programs</a>
                     </li>
-                    <li class="pull-right" data-displaytype="basket"><a href="#basket" data-toggle="tab" data-displaytype="basket" data-state="3" data-title="Basket">
-                        <i class="glyphicon glyphicon-shopping-cart"></i>  Bookings {{ basket.countDisplay }}</a>
+                    <li style="display: none" data-displaytype="myBookings">
+                        <a href="#myBookings" data-displaytype="myBookings" data-state="6" data-title="My Bookings">My Bookings</a>
                     </li>
                 </ul>
                 <div class="tab-content top-buffer-large">
-                    <div class="tab-pane active" id="venue">
+                    <div class="tab-pane active" id="programs">
                         <div class="alert alert-warning">
                             <div class="row">
-                                <div class="col-md-4 text-left">
-                                    <strong>Activity Type</strong>
-                                    <select data-bind="options: venues, optionsText: 'name', optionsValue: 'id', value: venueId" class="form-control"></select>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <strong>Sport</strong>
-                                    <select id="sportSelect" data-bind="options: activitiesFiltered, optionsText: 'name', optionsValue: 'id', value: activityId" class="form-control"></select>
-                                </div>
                                 <div class="col-md-2 text-left">
                                     <strong>Date</strong>
                                     <input type="text" class="form-control datepicker" data-bind="enable: !isMonthView(), value: date().toDateString()">
                                 </div>
-                                <div class="col-md-2 text-left" data-bind="if: venueId() == 1">
+                                <div class="col-md-2 col-md-offset-8 text-left">
                                     <strong>View</strong><br />
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default active" data-view="day" data-bind="click: toggleView, css: { 'active': viewType() == 'day' }">Day</button>
@@ -124,7 +84,7 @@
                                                     <strong>Item {{ $index() + 1 }}</strong>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <button class="btn btn-info btn-sm" data-bind="click: $root.basket.remove">Remove</button>
+                                                    <button class="btn btn-info btn-sm" data-bind="click: remove">Remove</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -172,7 +132,7 @@
                                             <button class="btn btn-success" data-bind="click: confirm">Confirm Booking</button>
                                         </div>
                                         <div class="col-md-4">
-                                            <button class="btn btn-info" data-bind="click: cancel">Cancel</button>
+                                            <button class="btn btn-info" data-bind="click: clearBasket">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
@@ -198,7 +158,7 @@
                                                 <input class="form-control" type="text" />
                                             </div>
                                             <div class="col-md-2">
-                                                <button class="btn btn-info">Check Code</button>
+                                                <button class="btn btn-info" data-bind="click: checkCode">Check Code</button>
                                             </div>
                                         </div>
                                     </div>
@@ -252,7 +212,7 @@
                                              </div>
 
                                               <div class="col-md-6 text-right">
-                                                <button type="submit" class="btn btn-default" data-bind="click: $parent.cancel">Cancel</button>
+                                                <button type="submit" class="btn btn-default" data-bind="click: cancel">Cancel</button>
                                              </div>
                                            </div>
                                         </form>
@@ -326,7 +286,7 @@
 
                                 <div class="col-md-5 col-md-offset-2">
                                     <h4>Tickets</h4>
-                                    Tickets will be sent to your registerd email. You can also view your booking and print out tickets under the my bookings sections.
+                                    Tickets will be sent to your registered email. You can also view your booking and print out tickets under the my bookings sections.
 
                                     <div class="top-buffer-large">
                                         <button class="btn btn-info">View my bookings</button>
@@ -409,115 +369,65 @@
 
                             Cras justo odio, dapibus ac facilisis in, egestas eget quam. Maecenas faucibus mollis interdum. Aenean lacinia bibendum nulla sed consectetur.
 
-                             <div class="page-header">
-                                <h3>Classes and Facility bookings</h3>
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <img src="images/basketball.jpg" class="img-responsive img-rounded" />
-                                    </div>
-
-                                    <div class="col-md-7">
-                                        <h4>Basketball - Facility booking</h4>
+                            <div data-bind="foreach: myBookings.items">
+                                <div class="page-header">
+                                    <h3>{{title}}</h3>
+                                    <!-- ko foreach: bookings -->
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                Sports Hall - Hall 3
+                                            <div class="col-md-2">
+                                                <img data-bind="attr: { 'src': imageLocation }" class="img-responsive img-rounded" />
                                             </div>
 
-                                            <div class="col-md-4 col-md-offset-1">
-                                                1 hour
+                                            <div class="col-md-7">
+                                            <h4>{{ description }}</h4>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                   {{ location }}
+                                                </div>
+
+                                                <div  data-bind="if: $data.time">
+                                                    <div class="col-md-4 col-md-offset-1">
+                                                        {{ time }}
+                                                    </div>
+                                                </div>
+
+                                                <div data-bind="if: $data.valid">
+                                                    <div class="col-md-4 col-md-offset-1">
+                                                        {{ valid }}
+                                                    </div>
+                                                </div>
                                             </div>
+
+                                            <div class="row">
+                                                <div data-bind="if: $data.date">
+                                                    <div class="col-md-4">
+                                                        {{ date }}
+                                                    </div>
+                                                </div>
+
+                                                <div data-bind="if: $data.attendees">
+                                                    <div class="col-md-4 col-md-offset-1">
+                                                        {{ attendees }}
+                                                    </div>
+                                                </div>
+
+                                                <div data-bind="if: $data.entry">
+                                                    <div class="col-md-4">
+                                                        {{ entry }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p class="top-buffer-large">
+                                                <button class="btn btn-info">Download ticket</button> 
+                                                <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
+                                            </p>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                17 April 2014 at 5 pm
-                                            </div>
-
-                                            <div class="col-md-4 col-md-offset-1">
-                                                Max 10 attendees
-                                            </div>
-                                        </div>
-
-                                        <p class="top-buffer-large">
-                                            <button class="btn btn-info">Download ticket</button> 
-                                            <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
-                                        </p>
                                     </div>
-                                </div>
-
-                                 <div class="row top-buffer-large">
-                                     <div class="col-md-2">
-                                         <img src="images/wateryoga.jpg" class="img-responsive img-rounded" />
-                                     </div>
-
-                                     <div class="col-md-7">
-                                         <h4>Water yoga</h4>
-                                         <div class="row">
-                                            <div class="col-md-4">
-                                                Aquatics center - Main pool
-                                            </div>
-
-                                            <div class="col-md-4 col-md-offset-1">
-                                                1 hour
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                17 April 2014 at 5 pm
-                                            </div>
-
-                                            <div class="col-md-4 col-md-offset-1">
-                                                2 spots
-                                            </div>
-                                        </div>
-
-                                        <p class="top-buffer-large">
-                                            <button class="btn btn-info">Download ticket</button> 
-                                            <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
-                                        </p>
-                                    </div>
+                                    <!-- /ko -->
                                 </div>
                             </div>
-
-                            <div class="page-header">
-                                <h3>Valid entry tickets</h3>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <img src="images/pool1.jpg" class="img-responsive img-rounded" />
-                                </div>
-
-                                <div class="col-md-7">
-                                    <h4>Aquatic Centre Entry Ticket</h4>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            Aquatic Centre
-                                        </div>
-
-                                        <div class="col-md-4 col-md-offset-1">
-                                           Valid to 30 September 2013
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            Single entry for 2 persons
-                                        </div>
-
-                                        <div class="col-md-4 col-md-offset-1">
-                                        
-                                        </div>
-                                    </div>
-
-                                    <p class="top-buffer-large">
-                                        <button class="btn btn-info">Download ticket</button> 
-                                        <button class="btn btn-info" data-loading-text="Sending..." data-complete-text="Ticket sent!" data-bind="click: myBookings.sendToEmail">Send ticket to my email</button>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        </div>       
                     </div>
                 </div>
             </div>
@@ -535,26 +445,6 @@
             </div>
 
             <div data-bind="if: showDayView">
-                <div class="container top-buffer-large">
-                    <div class="float-left box col-md-1 text-center">
-                        <h2>{{ dayNumber }}</h2>
-                        {{ month }}
-                    </div>
-                    <div class="col-md-3 text-left">
-                        <h2>{{ day }}</h2>
-                    </div>
-
-                    <div class="col-md-4" data-bind="visible: !isMonthView()">
-                        <div class="center-block">
-                            <h3>
-                                <a href="#" data-bind="click: goToPreviousDay"><i class="glyphicon glyphicon-chevron-left"></i>  {{ previousDay }}</a> 
-                                &#160 &#160 &#160 &#160  
-                                <a href="#" data-bind="click: goToNextDay, visible: nextDay().length > 0">{{ nextDay }} <i class="glyphicon glyphicon-chevron-right"></i></a>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-
                 <div id="dayView" class="text-left top-buffer-large">
                     <div class="panel panel-default" data-bind="visible: activitiesInDay().length == 0 && !showPoolView()">
                         <div class="panel-body">
@@ -566,57 +456,61 @@
                     </div>
 
                     <div data-bind="foreach: activitiesInDay">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="text-right">
-                                    <i class="glyphicon glyphicon-time"></i> {{ $root.getHourByDate($data[0].start) }}
+                        <div data-bind="foreach: NaN">
+                            <div class="container">
+                                <div class="box col-md-1 text-center">
+                                    <h2>{{ $root.getDayByDate($data[0].start) }}</h2>
+                                    {{ $root.getMonthByDate($data[0].start) }}
+                                </div>
+                                <div class="col-md-3 text-left">
+                                    <h2>{{ $root.getDayNameByDate($data[0].start) }}</h2>
                                 </div>
                             </div>
-                            <div class="panel-body">
-                                <div data-bind="foreach: $data.display">
-                                    <div class="row" data-bind="css: { 'bottom-buffer-line': $index() % 2 == 1 }">
-                                        <div class="col-md-9">
-                                            <div class="pull-left col-md-2" data-bind="if: $root.displayType() == 'events'">
-                                                <img data-bind="attr: { src: imageLocation }" class="img-responsive img-rounded" alt="" />
-                                            </div>
-
-                                            <h4>{{ displayTitle }}</h4>
-
-                                            <!-- ko if: $root.displayType() == 'activities' || $root.displayType() == 'venue' -->
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <i class="glyphicon glyphicon-map-marker"></i> {{ $root.getActivityName(start) }}
-                                                </div>
-
-                                                <div class="col-md-3">
-                                                    <i class="glyphicon glyphicon-user"></i> {{ placesLeft }} Available Slots
-                                                </div>
-                                            </div>
-                                            <!-- /ko -->
-
-                                            <!-- ko if: $root.displayType() == 'events' -->
-                                            <div class="row">
-                                                <div class="pull-left">
-                                                    {{ description }}
-                                                </div>
-                                            </div>
-                                            <!-- /ko -->
-                                        </div>
-
-                                        <div class="col-md-3 text-right">
-                                            <button class="btn btn-info more-info" data-bind="$root.showMoreInfo">More Info</button>
-                                            <button class="btn btn-info" 
-                                                data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
-                                                           click: $root.basket.add, enable: $root.eventsCanBook">Book</button>
+                        
+                            <div class="top-buffer-large">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="text-right">
+                                            <i class="glyphicon glyphicon-time"></i> {{ $root.getHourByDate($data[0].start) }}
                                         </div>
                                     </div>
+                                    <div class="panel-body">
+                                        <div data-bind="foreach: $data.display">
+                                            <div class="row" data-bind="css: { 'bottom-buffer-line': $index() % 2 == 1 }">
+                                                <div class="col-md-9">
+                                                    <div class="pull-left col-md-2" data-bind="if: imageLocation.length > 0">
+                                                        <img data-bind="attr: { src: imageLocation }" class="img-responsive img-rounded" alt="" />
+                                                    </div>
+
+                                                    <h4>{{ displayTitle }}</h4>
+
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <i class="glyphicon glyphicon-map-marker"></i> {{ $root.getActivityName(start) }}
+                                                        </div>
+
+                                                        <div class="col-md-3">
+                                                            <i class="glyphicon glyphicon-user"></i> {{ placesLeft }} Available Slots
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3 text-right">
+                                                    <button class="btn btn-info more-info" data-bind="click: $root.showMoreInfo">More Info</button>
+                                                    <button class="btn btn-info" 
+                                                        data-bind="text: $root.displayType() == 'activities' ? 'Book' : 'Buy Tickets',
+                                                                   enable: !HasBeenBooked() && $root.eventsCanBook(), click: $root.basket.add">Book</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer text-center" data-bind="visible: overLimit">
+                                        <a data-bind="text: showAll() ? 'Show Less' : 'Show More', click: $root.toggleShowAll" href="#"></a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="panel-footer text-center" data-bind="visible: overLimit">
-                                <a data-bind="text: showAll() ? 'Show Less' : 'Show More', click: $root.toggleShowAll" href="#"></a>
-                            </div>
+                            </div> 
                         </div>
-                    </div>
+                     </div>
                 </div> 
             </div>
 
@@ -635,5 +529,8 @@
             </div>
         </div>
     </div>
+
+    <?php include('/includes/footer.php'); ?>
+    
 </body>
 </html>

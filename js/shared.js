@@ -118,6 +118,8 @@ sbs.fullCalendarCustom.prototype.setupData = function (vm) {
         { name: 'Training', id: 2 },
         { name: 'Diving', id: 3 }
     ]);
+
+    vm.programId = ko.observable(querystring('programId') ? querystring('programId') : 0);
 }
 
 sbs.fullCalendarCustom.prototype.setupUtilityFunctions = function (vm, scope) {
@@ -237,6 +239,12 @@ sbs.fullCalendarCustom.prototype.getEvents = function (displayType, filter, filt
                 return booking.sportId == filter;
             });
             break;
+        case "programs":
+            return _.filter(this.programEvents, function (event) {
+                return event.programId == filter;
+            });
+
+            break;
     }
 }
 
@@ -291,7 +299,7 @@ sbs.fullCalendarCustom.prototype.setupEvents = function () {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         globalVM.basket.payment.clearScreens();
 
-        changeDisplayType($(this).data("displaytype"))
+        changeDisplayType($(this).data("displaytype"));
 
         var reason = querystring("reason");
         var showReason = reason != "" && $(this).data("displaytype") == "basket";
@@ -352,6 +360,12 @@ sbs.fullCalendarCustom.prototype.setupDateVM = function (vm) {
 
         newDate.setDate(theDate.getDate() - 1);
 
+
+        var diffDays = Math.round(Math.abs((theDate.getTime() - currentDate.getTime()) / (oneDay)));
+
+        if (diffDays <= 0)
+            return "";
+
         return newDate.getDate() + " " + shortMonthNames[newDate.getMonth()];
     }, vm);
 
@@ -392,6 +406,21 @@ sbs.fullCalendarCustom.prototype.setupDateVM = function (vm) {
         if(vm.displayType() == "swimmingPool") { // or swimmingNights/swimmingEvents
             vm.showPools(vm.sportEventName());
         }
+    }
+
+    vm.getDayByDate = function (date) {
+        var tempDate = new Date(date);
+        return tempDate.getDate();
+    }
+
+    vm.getDayNameByDate = function (date) {
+        var tempDate = new Date(date);
+        return dayNames[tempDate.getDay()];
+    }
+
+    vm.getMonthByDate = function (date) {
+        var tempDate = new Date(date);
+        return shortMonthNames[tempDate.getMonth()];
     }
 
     vm.getHourByDate = function (date) {
@@ -449,8 +478,8 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
         var displayType = this.displayType();
         var theDate = this.date();
         var activityId = this.activityId();
+        var programId = this.programId();
         var venueId = this.venueId();
-        var events = scope.getEvents(displayType, activityId, venueId);
         var eventTypeId = this.eventTypeId();
         var filteredEvents;
 
@@ -460,6 +489,8 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                 if (cachedEvents[theDate + "_" + eventTypeId]) {
                     return cachedEvents[theDate + "_" + eventTypeId];
                 }
+
+                var events = scope.getEvents(displayType, activityId, venueId);
 
                 filteredEvents = _.filter(events, function (event) {
                     event.HasBeenBooked = ko.observable(false);
@@ -474,6 +505,8 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                     return cachedActivities[theDate + "_" + venueId + "_" + activityId];
                 }
 
+                var events = scope.getEvents(displayType, activityId, venueId);
+
                 filteredEvents = _.filter(events, function (event) {
                     event.HasBeenBooked = ko.observable(false);
 
@@ -484,6 +517,8 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
 
                 break;
             case "venue":
+                var events = scope.getEvents(displayType, activityId, venueId);
+
                 filteredEvents = _.filter(events, function (event) {
                     event.HasBeenBooked = ko.observable(false);
 
@@ -492,7 +527,19 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
                 });
 
                 break;
+            case "programs":
+                var events = scope.getEvents(displayType, programId);
+
+                filteredEvents = _.filter(events, function (event) {
+                    event.HasBeenBooked = ko.observable(false);
+
+                    return true;
+                });
+
+                break;
             case "sportsNights": case "paidActivities":
+                var events = scope.getEvents(displayType, activityId, venueId);
+
                 filteredEvents = _.filter(events, function (event) {
                     event.HasBeenBooked = ko.observable(false);
 
@@ -503,22 +550,60 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
         }
 
         // Group the filtered events by time.
-        var groupedEvents = _.groupBy(filteredEvents, function (event) {
-            var thisDate = new Date(event.start);
-            return thisDate.getHours();
-        });
+        var groupedEvents
+        if (displayType == "programs") {
+            groupEvents = _.groupBy(filteredEvents, function (event) {
+                var thisDate = new Date(event.start);
+                return thisDate.getDate() + "_" + thisDate.getMonth() + "_" + thisDate.getYear();
+            });
 
-        for (key in groupedEvents) {
-            var groupedEvent = groupedEvents[key];
+            var groupArray = _.toArray(groupEvents);
 
-            groupedEvent.fullDisplay = groupedEvent;
-            groupedEvent.showAll = ko.observable(false);
-            groupedEvent.overLimit = groupedEvent.fullDisplay.length > filterLimit;
-            groupedEvent.display = ko.computed(function () {
-                if (this.showAll()) { return this.fullDisplay; }
-                return this.fullDisplay.slice(0, filterLimit);
-            }, groupedEvent);
+            for (var i = 0; i < groupArray.length; i++) {
+ 
+                var groupedEvent = groupArray[i];
+
+                groupedEvent.fullDisplay = groupedEvent;
+                groupedEvent.showAll = ko.observable(false);
+                groupedEvent.overLimit = groupedEvent.fullDisplay.length > filterLimit;
+                groupedEvent.display = ko.computed(function () {
+                    if (this.showAll()) { return this.fullDisplay; }
+                    return this.fullDisplay.slice(0, filterLimit);
+                }, groupedEvent);
+
+            }
+
+            console.log(groupEvents);
+
+            groupEvents = _.groupBy(groupEvents, function (event) {
+                var thisDate = new Date(event.start);
+                return thisDate.getHours();
+            });
+
+            console.log(groupEvents);
+
+            return groupEvents;
+        } else {
+            groupEvents = _.groupBy(filteredEvents, function (event) {
+                var thisDate = new Date(event.start);
+                return thisDate.getHours();
+            });
+
+            for (key in groupedEvents) {
+                var groupedEvent = groupedEvents[key];
+
+                groupedEvent.fullDisplay = groupedEvent;
+                groupedEvent.showAll = ko.observable(false);
+                groupedEvent.overLimit = groupedEvent.fullDisplay.length > filterLimit;
+                groupedEvent.display = ko.computed(function () {
+                    if (this.showAll()) { return this.fullDisplay; }
+                    return this.fullDisplay.slice(0, filterLimit);
+                }, groupedEvent);
+            }
         }
+
+        
+        
 
         var makeArray = _.toArray(groupedEvents);
 
@@ -544,8 +629,7 @@ sbs.fullCalendarCustom.prototype.setupActivityVM = function (vm, scope) {
 }
 
 sbs.fullCalendarCustom.prototype.setupCalendar = function (displayType, displayTypeName) {
-    currentEventSource = customCalendar.getEvents('events');
-    currentEventSource = customCalendar.groupType(currentEventSource, "Event");
+    changeDisplayType(displayType, true);
 
     $("#calendar").fullCalendar({
         header: {
@@ -632,8 +716,10 @@ sbs.fullCalendarCustom.prototype.setupRouting = function (forwardAction, title, 
     });
 }
 
-function changeDisplayType(displayType) {
-    calendar.fullCalendar('removeEventSource', currentEventSource);
+function changeDisplayType(displayType, ignoreCalendar) {
+    if (!ignoreCalendar) {
+        calendar.fullCalendar('removeEventSource', currentEventSource);
+    }
 
     switch (displayType) {
         case "events":
@@ -644,7 +730,9 @@ function changeDisplayType(displayType) {
 
             currentEventSource = customCalendar.groupType(customCalendar.getEvents("events", globalVM.eventTypeId()), "Event");
 
-            calendar.fullCalendar('addEventSource', currentEventSource);
+            if (!ignoreCalendar) {
+                calendar.fullCalendar('addEventSource', currentEventSource);
+            }
             break;
         case "activities":
             if (!globalVM.isMonthView()) {
@@ -654,9 +742,23 @@ function changeDisplayType(displayType) {
 
             currentEventSource = customCalendar.groupType(customCalendar.getEvents("activities", globalVM.activityId(), globalVM.venueId()), "Activity");
 
-            calendar.fullCalendar('addEventSource', currentEventSource);
+            if (!ignoreCalendar) {
+                calendar.fullCalendar('addEventSource', currentEventSource);
+            }
             break;
-        case "swimmingPool": case "venue":
+        case "programs":
+            if (!globalVM.isMonthView()) {
+                globalVM.showPoolView(false);
+                globalVM.showDayView(true);
+            }
+
+            currentEventSource = customCalendar.groupType(customCalendar.getEvents("programs", globalVM.programId()), "Event");
+
+            if (!ignoreCalendar) {
+                calendar.fullCalendar('addEventSource', currentEventSource);
+            }
+            break;
+        case "swimmingPool": case "venue": case "tours":
             globalVM.showPoolView(true);
             globalVM.showDayView(true);
             globalVM.viewType('day');
