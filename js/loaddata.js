@@ -1,7 +1,7 @@
 ﻿sbs.fullCalendarCustom.prototype.loadData = function () {
     var self = this;
 
-    var baseUrl = "json/";
+    var baseUrl = "http://localhost:50860/json/";
 
     return $.whenAll([
         $.getJSON(baseUrl + "mainEvents.json", function (data) {

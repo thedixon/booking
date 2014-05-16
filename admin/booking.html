@@ -7,8 +7,8 @@
     <link href="../css/bootstrap.css" rel='stylesheet' />
     <link href='../fullcalendar/fullcalendar-custom.css' rel='stylesheet' />
 
-    <script src='../fullcalendar/jquery-1.10.2.js'></script>
-    <script src='../fullcalendar/jquery-ui-1.10.4.custom.min.js'></script>
+    <script src='../lib/jquery.min.js'></script>
+    <script src='../lib/jquery-ui.custom.min.js'></script>
     <script src='../lib/jquery.cookie.js'></script>
     <script src="../lib/bootstrap.js"></script>
     <script src='../lib/history.js'></script>
@@ -27,34 +27,38 @@
 </head>
 
 <body>
-    <div class="modal fade" id="pleaseWaitDialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h4>Loading</h4>
-          </div>
-          <div class="modal-body">
-            <div class="progress progress-striped active">
-                <div class="progress-bar" role="progressbar" style="width: 100%">
+    <div class="modal fade" id="pleaseWaitDialog" data-backdrop="static"
+         data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>{{ pleaseWaitText }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar" role="progressbar" style="width: 100%">
+                        </div>
+                    </div>
                 </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-    <div class="modal fade" id="timerModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-            <p>Your time is almost up! Please check out your basket now or extend your time, 
-                otherwise the contents of your basket will be cleared.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: basket.extendTime">Extend Time</button>
-            <button type="button" class="btn btn-primary" data-bind="click: basket.navigateTo">Go to Basket</button>
-          </div>
+    <div class="modal fade" id="timerModal" data-backdrop="static"
+         data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>
+                        Your time is almost up! Please check out your basket now or extend your time,
+                        otherwise the contents of your basket will be cleared.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: basket.extendTime">Extend Time</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: basket.navigateTo">Go to Basket</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="modal fade" id="moreInfoModal">
@@ -238,18 +242,6 @@
 
                                     <div class="top-buffer-large">
                                         If you only want to book this activity, agree to the terms and confirm your booking.
-                                    </div>
-
-                                    <div class="row top-buffer-large">
-                                        <div class="col-md-12">
-                                            <input type="checkbox" data-bind="checked: agreedToTerms" /> Agree to the <a href="#">terms and conditions</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="top-buffer-large" data-bind="if: notAgreedToTerms">
-                                        <p class="bg-danger">
-                                            <i class="glyphicon glyphicon-exclamation-sign"></i> You must agree to the terms and conditions before continuing.
-                                        </p>
                                     </div>
 
                                     <div class="row top-buffer-large">

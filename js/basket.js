@@ -16,15 +16,15 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     }
 
     // Populate basket items if the basket session cookie is set.
-    if ($.cookie("basket_session") != null) {
-        $('#pleaseWaitDialog').modal('show');
+    //if ($.cookie("basket_session") != null) {
+    //    $('#pleaseWaitDialog').modal('show');
 
-        $.get("basket.php?action=get&basket_session=" + $.cookie("basket_session"), function (data) {
-            $('#pleaseWaitDialog').modal('hide');
+    //    $.getJSON("basket.php?action=get&basket_session=" + $.cookie("basket_session"), function (data) {
+    //        $('#pleaseWaitDialog').modal('hide');
 
-            self.basket.items(data);
-        });
-    }
+    //        self.basket.items(data);
+    //    });
+    //}
 
     self.basket.extendTime = function () {
         self.basket.timerOnHold = false;
@@ -38,20 +38,22 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     self.basket.navigateTo = function () {
         self.basket.notAgreedToTerms(false);
 
-        self.basket.timerOnHold = false;
         self.basket.continuedToBasket = true;
-
-        $('#tabs li:eq(3) a').tab('show');
+        self.basket.timerOnHold = false;
+       
+        if (self.displayType() != "basket") {
+            $('#tabs li:eq(3) a').tab('show');
+        }
 
         $('#timerModal').modal('hide');
-
-        changeDisplayType("basket");
     }
 
     self.basket.remove = function () {
         $('#pleaseWaitDialog').modal('show');
-
-        $.post("basket.php", { action: "remove", "id": 1 }, function (data) {
+        var data = {
+            error: false
+        }
+        //$.post("basket.php", { action: "remove", "id": 1 }, function (data) {
             $('#pleaseWaitDialog').modal('hide');
 
             if (!data.error) {
@@ -76,11 +78,11 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
 
                 $('#moreInfoModal').modal('show');
             }
-        });
+        //});
     }
 
     self.basket.clearBasket = function () {
-        $.post("basket.php", { action: "removeAll", "basket_session": "12345" });
+        //$.post("basket.php", { action: "removeAll", "basket_session": "12345" });
 
         for (var i = 0; i < self.basket.items.length; i++) {
             self.basket.items[i].HasBeenBooked(false);
@@ -106,9 +108,11 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         $('#pleaseWaitDialog').modal('show');
 
         item.HasBeenBooked(true);
-
+        var data = {
+            error: false
+        }
         // First, add to basket on server
-        $.post("basket.php", { action: "add", "id": "1", "basket_session": + $.cookie("basket_session") || 0 }, function (data) {
+        //$.post("basket.php", { action: "add", "id": "1", "basket_session": + $.cookie("basket_session") || 0 }, function (data) {
             $('#pleaseWaitDialog').modal('hide');
 
             if (!data.error) {
@@ -151,7 +155,19 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
 
                 $('#moreInfoModal').modal('show');
             }
-        });
+        //});
+    }
+
+    self.basket.checkCode = function () {
+        self.pleaseWaitText('Checking code...');
+
+        $('#pleaseWaitDialog').modal('show');
+
+        setTimeout(function () {
+            self.pleaseWaitText('Loading');
+
+            $('#pleaseWaitDialog').modal('hide');
+        }, 5000)
     }
 
     self.basket.confirm = function () {

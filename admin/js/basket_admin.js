@@ -38,14 +38,14 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
     self.basket.navigateTo = function () {
         self.basket.notAgreedToTerms(false);
 
-        self.basket.timerOnHold = false;
         self.basket.continuedToBasket = true;
+        self.basket.timerOnHold = false;
 
-        $('#tabs li:eq(3) a').tab('show');
+        if (self.displayType() != "basket") {
+            $('#tabs li:eq(3) a').tab('show');
+        }
 
         $('#timerModal').modal('hide');
-
-        changeDisplayType("basket");
     }
 
     self.basket.remove = function () {
@@ -108,14 +108,21 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
         item.HasBeenBooked(true);
 
         // First, add to basket on server
-        $.post("basket.php", { action: "add", "id": "1", "basket_session": $.cookie("basket_session") || 0 }, function (data) {
+        //$.post("../basket.php", {
+         //   action: "add",
+        //    "id": "1",
+        //    "basket_session": $.cookie("basket_session") || 0
+        //}, function (data) {
             $('#pleaseWaitDialog').modal('hide');
+            var data = {
+                error: false
+            };
 
             if (!data.error) {
                 self.basket.showTimer(true);
 
                 self.basket.timerValue(new Date(0, 0, 0, 0, timerMinutes, 0, 0));
-                var activity = ''
+                var activity = '';
 
                 // This will ultimately be template-based
                 if (item.eventType == "swimming") {
@@ -151,14 +158,25 @@ sbs.fullCalendarCustom.prototype.setupBasketVM = function (vm) {
 
                 $('#moreInfoModal').modal('show');
             }
-        });
+       // });
     }
 
     self.basket.confirm = function () {
-        var customerId = globalVM.customerId();
+        //var customerId = globalVM.customerId();
 
-        $.post("basket.php", { action: "finish", "basket_session": $.cookie("basket_session"), "customerId": customerId }, function (data) {
+        var customerId = 1; // 1 as a test for now.
+
+        $.post("basket.php", {
+            action: "finish",
+            "basket_session": $.cookie("basket_session"),
+            "customerId": customerId
+        }, function (data) {
             self.basket.clearBasket();
+
+            // go to payment thank you screen
+            History.pushState({ state: 5 }, "Payment", "?action=payment&reason=success");
+
+            self.basket.payment.showThankYou(true);
         });
     }
 

@@ -29,18 +29,19 @@ ko.bindingHandlers.timer = {
             timer = setInterval(function () {
                 if (!globalVM.basket.timerOnHold) {
                     var date = valueAccessor()();
+                    
                     date.setSeconds(date.getSeconds() - 1);
 
                     $(element).text(date.getMinutes() + " minutes " + date.getSeconds() + " seconds");
 
-                    if (date.getMinutes() < 1 && date.getSeconds() <= secondsUntilBasketWarning && !globalVM.continuedToBasket) {
+                    if (date.getMinutes() < 1 && date.getSeconds() <= secondsUntilBasketWarning && !globalVM.basket.continuedToBasket) {
                         globalVM.basket.timerOnHold = true;
 
                         $('#timerModal').modal('show');
                     }
 
                     if (date.getMinutes() <= 0 && date.getSeconds() <= 0) {
-                        globalVM.basket.clear();
+                        globalVM.basket.clearBasket();
                         clearInterval(timer);
                     }
                 }

@@ -36,7 +36,7 @@ window.sbs = window.sbs || {};
 
 sbs.fullCalendarCustom.prototype.loadTemplates = function (templatesLoaded) {
     var loadTemplateCollection = function (file, success) {
-        $.get('templates/' + file + '.html', function (templates) {
+        $.get('http://localhost:50860/templates/' + file + '.html', function (templates) {
             $('body').append('<div style="display:none">' + templates + '<\/div>');
             success();
         });
@@ -121,6 +121,7 @@ sbs.fullCalendarCustom.prototype.setupData = function (vm) {
 }
 
 sbs.fullCalendarCustom.prototype.setupUtilityFunctions = function (vm, scope) {
+    vm.pleaseWaitText = ko.observable('Loading');
     vm.showDayView = ko.observable(true);
     vm.showPoolView = ko.observable(false);
     vm.viewType = ko.observable("day");
@@ -143,7 +144,7 @@ sbs.fullCalendarCustom.prototype.setupUtilityFunctions = function (vm, scope) {
             vm.showPoolView(false);
 
             $('#calenderHolder').show();
-            scope.fullCalendar('changeView', viewType);
+            $('#calender').fullCalendar('changeView', viewType);
         } else {
             vm.showDayView(true);
 
@@ -309,6 +310,25 @@ sbs.fullCalendarCustom.prototype.setupEvents = function () {
     })
 
     $('.btn').button();
+
+    var watermark = 'Search';
+
+    //init, set watermark text and class
+    $('#topsearch').val(watermark).addClass('watermark');
+
+    //if blur and no value inside, set watermark text and class again.
+    $('#topsearch').blur(function () {
+        if ($(this).val().length == 0) {
+            $(this).val(watermark).addClass('watermark');
+        }
+    });
+
+    //if focus and text is watermrk, set it to empty and remove the watermark class
+    $('#topsearch').focus(function () {
+        if ($(this).val() == watermark) {
+            $(this).val('').removeClass('watermark');
+        }
+    });
 }
 
 sbs.fullCalendarCustom.prototype.setupDateVM = function (vm) {
@@ -339,6 +359,10 @@ sbs.fullCalendarCustom.prototype.setupDateVM = function (vm) {
         var previousDay = vm.date();
         previousDay.setDate(previousDay.getDate() - 1);
         vm.date(previousDay);
+
+        if (vm.displayType() == "swimmingPool" ) {
+            vm.showPools(vm.sportEventName());
+        }
     }
 
     vm.nextDay = ko.computed(function () {
@@ -364,6 +388,10 @@ sbs.fullCalendarCustom.prototype.setupDateVM = function (vm) {
         var nextDay = this.date();
         nextDay.setDate(nextDay.getDate() + 1);
         this.date(nextDay);
+
+        if(vm.displayType() == "swimmingPool") { // or swimmingNights/swimmingEvents
+            vm.showPools(vm.sportEventName());
+        }
     }
 
     vm.getHourByDate = function (date) {

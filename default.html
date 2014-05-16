@@ -7,8 +7,8 @@
     <link href="./css/bootstrap.css" rel="stylesheet">
     <link href='./fullcalendar/fullcalendar-custom.css' rel='stylesheet' />
 
-    <script src='./fullcalendar/jquery-1.10.2.js'></script>
-    <script src='./fullcalendar/jquery-ui-1.10.4.custom.min.js'></script>
+    <script src='./lib/jquery.min.js'></script>
+    <script src='./lib/jquery-ui.custom.min.js'></script>
     <script src='./lib/jquery.cookie.js'></script>
     <script src="./lib/bootstrap.js"></script>
     <script src='./lib/history.js'></script>
@@ -26,35 +26,134 @@
     <title></title>
 </head>
 
+<div id="headerCont">
+    <header>
+
+        <!--Top Navigation Stats-->
+        <div class="topNav">
+            <div class="pull-left floatLeft" ><a class="toplink" href="http://sportshub.com.sg/Pages/venuehirer.aspx">Venue Hirer Info</a><b class="dot">.</b><a class="toplink" href="http://sportshub.com.sg/nationalstadiumclub"><span lang="en-in">National Stadium Club</span></a></div>
+            <div class="pull-left floatLeft topsearch">
+                <input class="topserachbtn" name="" type="button">
+                <input name="" type="text" id="topsearch">
+            </div>
+        </div>
+        <!--Top Navigation Ends-->
+        <!--Company Logo Starts-->
+        <a href="index.html" class="mainLogo"><img src="images/logo.png" alt="" /></a>
+        <!--Company Logo Ends-->
+        <!--Main Navigation Starts-->
+        <div class="nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="http://sportshub.com.sg/"> <span id="ctl00_topNavigation_ParentRepeater_ctl00_lblParentTitle">Home</span></a> </li>
+                <li class="nav-item">
+                    <span class="nav-click"><i class="nav-arrow"></i></span><a href="http://sportshub.com.sg/sportshubtix"> <span id="ctl00_topNavigation_ParentRepeater_ctl01_lblParentTitle">Sports Hub Tix</span></a>
+                    <ul class="nav-submenu">
+                        <span class="arrow"><img width="26" height="13" src="images/menuarrow.png"></span>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/sportshubtix/"> <span id="ctl00_topNavigation_ParentRepeater_ctl01_rptNav_ctl00_lblChildTitle">Upcoming Events</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/sportshubtix/Pages/box-offices.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl01_rptNav_ctl01_lblChildTitle">Box Offices</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/sportshubtix/Pages/ways-to-buy-tickets.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl01_rptNav_ctl02_lblChildTitle">Ways To Buy Tickets</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/sportshubtix/Pages/ticketing-t-and-cs.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl01_rptNav_ctl03_lblChildTitle">Ticketing T&amp;Cs</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/sportshubtix/Pages/ticketing-faq.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl01_rptNav_ctl04_lblChildTitle">Ticketing FAQ</span></a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="http://sportshub.com.sg/events"> <span id="ctl00_topNavigation_ParentRepeater_ctl02_lblParentTitle">Events</span></a> </li>
+                <li class="nav-item">
+                    <span class="nav-click"><i class="nav-arrow"></i></span><a href="http://sportshub.com.sg/activities"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_lblParentTitle">Activities</span></a>
+                    <ul class="nav-submenu">
+                        <span class="arrow"><img width="26" height="13" src="images/menuarrow.png"></span>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/activities/Pages/experience-sports.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_rptNav_ctl00_lblChildTitle">Experience Sports</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/activities/Pages/swimming.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_rptNav_ctl01_lblChildTitle">Swimming</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/activities/Pages/aquatic-excercises.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_rptNav_ctl02_lblChildTitle">Aquatic Excercises</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/activities/Pages/certified-water-sports-courses.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_rptNav_ctl03_lblChildTitle">Certified Water Sports Courses</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/activities/Pages/boat-rental.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_rptNav_ctl04_lblChildTitle">Boat Rental</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/activities/Pages/learning-journey.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl03_rptNav_ctl05_lblChildTitle">Learning Journey</span></a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-click"><i class="nav-arrow"></i></span><a href="http://sportshub.com.sg/venues"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_lblParentTitle">Venues</span></a>
+                    <ul class="nav-submenu">
+                        <span class="arrow"><img width="26" height="13" src="images/menuarrow.png"></span>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/national-stadium.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl00_lblChildTitle">National Stadium</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/singapore-indoor-stadium.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl01_lblChildTitle">Singapore Indoor Stadium</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/ocbc-arena.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl02_lblChildTitle">OCBC Arena</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/ocbc-aquatic-centre"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl03_lblChildTitle">OCBC Aquatic Centre</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/splash-n-surf.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl04_lblChildTitle">Splash-N-Surf</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/water-sports-centre.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl05_lblChildTitle">Water Sports Centre</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/singapore-sports-museum.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl06_lblChildTitle">Singapore Sports Museum</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://TBD"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl07_lblChildTitle">Sports Hub Library</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/venues/Pages/kallang-wave-mall.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl04_rptNav_ctl08_lblChildTitle">Kallang Wave Mall</span></a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-click"><i class="nav-arrow"></i></span><a href="http://sportshub.com.sg/customercare"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_lblParentTitle">Customer Care</span></a>
+                    <ul class="nav-submenu">
+                        <span class="arrow"><img width="26" height="13" src="images/menuarrow.png"></span>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/contact-us.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl00_lblChildTitle">Contact Us</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://TBD"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl01_lblChildTitle">Sports Hub Tix</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/faq.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl02_lblChildTitle">FAQ</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/customercare/Pages/our-program.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl05_rptNav_ctl03_lblChildTitle">Our Program</span></a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-click"><i class="nav-arrow"></i></span><a href="http://sportshub.com.sg/aboutus"> <span id="ctl00_topNavigation_ParentRepeater_ctl06_lblParentTitle">About Us</span></a>
+                    <ul class="nav-submenu">
+                        <span class="arrow"><img width="26" height="13" src="images/menuarrow.png"></span>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/aboutus/Pages/sports-hub-project.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl06_rptNav_ctl00_lblChildTitle">Sports Hub Project</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/aboutus/Pages/the-team.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl06_rptNav_ctl01_lblChildTitle">The Team</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/aboutus/Pages/the-board.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl06_rptNav_ctl02_lblChildTitle">The Board</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/aboutus/Pages/careers.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl06_rptNav_ctl03_lblChildTitle">Careers</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/aboutus/Pages/sponsors.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl06_rptNav_ctl04_lblChildTitle">Sponsors</span></a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-click"><i class="nav-arrow"></i></span><a href="http://sportshub.com.sg/directions"> <span id="ctl00_topNavigation_ParentRepeater_ctl07_lblParentTitle">Directions</span></a>
+                    <ul class="nav-submenu">
+                        <span class="arrow"><img width="26" height="13" src="images/menuarrow.png"></span>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/directions/Pages/getting-here.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl07_rptNav_ctl00_lblChildTitle">Getting Here</span></a> </li>
+                        <li class="nav-submenu-item"><a href="http://sportshub.com.sg/directions/Pages/getting-home.aspx"> <span id="ctl00_topNavigation_ParentRepeater_ctl07_rptNav_ctl01_lblChildTitle">Getting Home</span></a> </li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="nav-mobile"></div>
+        </div>
+        <!--Main Navigation Ends-->
+
+    </header>
+</div>
+
 <body>
-    <div class="modal fade" id="pleaseWaitDialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h4>Loading</h4>
-          </div>
-          <div class="modal-body">
-            <div class="progress progress-striped active">
-                <div class="progress-bar" role="progressbar" style="width: 100%">
+    <div class="modal fade" id="pleaseWaitDialog" data-backdrop="static"
+         data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>{{ pleaseWaitText }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress progress-striped active">
+                        <div class="progress-bar" role="progressbar" style="width: 100%">
+                        </div>
+                    </div>
                 </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-    <div class="modal fade" id="timerModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-            <p>Your time is almost up! Please check out your basket now or extend your time, 
-                otherwise the contents of your basket will be cleared.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: basket.extendTime">Extend Time</button>
-            <button type="button" class="btn btn-primary" data-bind="click: basket.navigateTo">Go to Basket</button>
-          </div>
+    <div class="modal fade" id="timerModal" data-backdrop="static"
+         data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>
+                        Your time is almost up! Please check out your basket now or extend your time,
+                        otherwise the contents of your basket will be cleared.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: basket.extendTime">Extend Time</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: basket.navigateTo">Go to Basket</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="modal fade" id="moreInfoModal">
@@ -82,14 +181,6 @@
     </div>
 
     <div id="main" style="display: none">
-        <div class="navbar navbar-top bg-warning" role="navigation">
-            <div class="container">
-                <ul class="nav navbar-nav pull-right">
-                    <li><a href="#" data-bind="click: signIn.goTo">Sign In</a></li>
-                </ul>
-            </div>
-        </div>
-
         <div class="container">
             <div id="tabs">
                 <ul class="nav nav-tabs">
@@ -198,7 +289,7 @@
                                                     <strong>Item {{ $index() + 1 }}</strong>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <button class="btn btn-info btn-sm" data-bind="click: $root.basket.remove">Remove</button>
+                                                    <button class="btn btn-info btn-sm" data-bind="click: remove">Remove</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -272,7 +363,7 @@
                                                 <input class="form-control" type="text" />
                                             </div>
                                             <div class="col-md-2">
-                                                <button class="btn btn-info">Check Code</button>
+                                                <button class="btn btn-info" data-bind="click: checkCode">Check Code</button>
                                             </div>
                                         </div>
                                     </div>
@@ -659,5 +750,62 @@
             </div>
         </div>
     </div>
+
+    <footer id="footer">
+        <div class="zerogrid">
+            <div class="row footer-bg">
+                <div class="wrapper">
+                    <div class="col-2-3"> </div>
+                    <div class="wrap-col">
+                        <div class="contact">
+                            <h5>Contact (General Enquiries)</h5>
+                            <span class="email">contactus@sportshub.com.sg</span><br>
+                            <span class="phone">+65 6344 2660</span>
+                        </div>
+                        <ul class="social-list">
+                            <h5>Also Find Us On:</h5>
+                            <li><a class="fb" href="https://www.facebook.com/sporesportshub"><img alt="" src="images/social-icon-2.png"></a></li>
+                            <li><a class="tweet" href="https://twitter.com/sgsportshub"><img alt="" src="images/social-icon-3.png"></a></li>
+                            <!--<li><a href="https://plus.google.com" class="gpluse"><img src="/_layouts/B2Cimages/social-icon-1.png" alt=""></a></li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer id="botsponser">
+        <div class="zerogrid">
+            <div class="row">
+                <div class="wrapper">
+                    <div class="sponserIMGBot">
+                        <div class="premiere">
+                            <p><strong>Premiere Founding Partner </strong></p>
+                            <img alt="" src="images/ocbcLOGO.jpg">
+                        </div>
+                        <div class="founding">
+                            <p><strong>Singapore Sports Hub Founding Partners</strong> </p>
+                            <img alt="" src="images/starhubLOGO.jpg"><img alt="" src="images/tigerLOGO.jpg"><img alt="" src="images/canonLOGO.jpg"><img alt="" src="images/mediacorpLOGO.jpg"><img alt="" src="images/greateasternLOGO.jpg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer>
+        <div class="wrap-col footerbot">
+            <div class="zerogrid">
+                <div class="row lastfooter">
+                    <div class="backbtn"> <a href="#headerCont">Back to top</a> </div>
+                    <ul class="copyright">
+                        <li> <a href="privacy-statement.aspx" id="ctl00_FooterStripID_hyprPrivacyStatement">Privacy Statement</a> </li>
+                        <li> <a href="terms-of-use.aspx" id="ctl00_FooterStripID_hyprTermsOfUse">Terms Of Use</a> </li>
+                        <li> &copy; 2014 Singapore Sports Hub</li>
+                        <br>
+                    </ul>
+                    <div class="copyright">This website is best viewed in: Internet Explorer 10+, Firefox 2+, Google Chrome 3+, Safari 3+ or Opera 9+.</div>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

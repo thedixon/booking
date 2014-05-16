@@ -62,7 +62,7 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
             return laneArray;
         }
 
-        function showPools(val) {
+        self.showPools = function(val) {
             var sportsEvents = customCalendar.getEvents('sports');
 
             var swimmingBookings = customCalendar.getEvents('swimmingBookings', self.swimmingPoolSelected());
@@ -137,11 +137,11 @@ sbs.fullCalendarCustom.prototype.setupKnockout = function () {
 
         this.swimmingPoolSelected = ko.observable(1);
         this.swimmingPoolSelected.subscribe(function () {
-            showPools(self.sportEventName());
+            self.showPools(self.sportEventName());
         });
 
         this.sportEventName.subscribe(function (val) {
-            showPools(val);
+            self.showPools(val);
         });
 
         this.showSwimmingDetails = function (event, override) {
